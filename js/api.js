@@ -576,6 +576,8 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
 // 拦截API请求
 (function() {
     const originalFetch = window.fetch;
+    // 暴露 originalFetch 供 testSiteAvailability 直接绕过拦截器使用
+    window._originalFetch = originalFetch;
     
     window.fetch = async function(input, init) {
         const requestUrl = typeof input === 'string' ? new URL(input, window.location.origin) : input.url;
@@ -612,25 +614,175 @@ async function handleMultipleCustomSearch(searchQuery, customApiUrls) {
     };
 })();
 
-async function testSiteAvailability(apiUrl) {
+async function testSiteAvailability(apiUrl, detailUrl = '') {
+    const result = { accessible: false, searchable: false, playable: false };
+    // 使用 _originalFetch 直接走 /proxy/ 路径，完全绕开 /api/* 拦截器
+    const directFetch = window._originalFetch || window.fetch;
+    
+    // 辅助函数：根据 proxyAuth 构建带鉴权的 proxy URL
+    async function buildProxyUrl(targetUrl) {
+        const raw = PROXY_URL + encodeURIComponent(targetUrl);
+        if (window.ProxyAuth && window.ProxyAuth.addAuthToProxyUrl) {
+            return await window.ProxyAuth.addAuthToProxyUrl(raw);
+        }
+        return raw;
+    }
+    
     try {
-        // 使用更简单的测试查询
-        const response = await fetch('/api/search?wd=test&customApi=' + encodeURIComponent(apiUrl), {
-            // 添加超时
-            signal: AbortSignal.timeout(5000)
+        // ===== 1. 访问性 & 搜索性测试 =====
+        // 直接请求外部 API，不走 /api/search 拦截器
+        const searchApiUrl = apiUrl + API_CONFIG.search.path + encodeURIComponent('流浪地球');
+        const searchProxyUrl = await buildProxyUrl(searchApiUrl);
+        
+        const searchRes = await directFetch(searchProxyUrl, {
+            headers: API_CONFIG.search.headers,
+            signal: AbortSignal.timeout(10000)
         });
         
-        // 检查响应状态
-        if (!response.ok) {
-            return false;
+        if (!searchRes.ok) {
+            console.warn('[API测试] 搜索请求失败:', searchRes.status, apiUrl);
+            return result;
+        }
+        result.accessible = true;
+        
+        let searchData;
+        try {
+            searchData = await searchRes.json();
+        } catch (e) {
+            console.warn('[API测试] 搜索返回非JSON:', apiUrl);
+            return result;
         }
         
-        const data = await response.json();
+        if (!searchData || !Array.isArray(searchData.list) || searchData.list.length === 0) {
+            console.warn('[API测试] 搜索无结果:', apiUrl);
+            return result;
+        }
+        result.searchable = true;
         
-        // 检查API响应的有效性
-        return data && data.code !== 400 && Array.isArray(data.list);
+        // ===== 2. 播放性测试 =====
+        // 获取第一个视频的详情
+        const videoId = searchData.list[0].vod_id;
+        if (!videoId) return result;
+        
+        const detailApiUrl = apiUrl + API_CONFIG.detail.path + videoId;
+        const detailProxyUrl = await buildProxyUrl(detailApiUrl);
+        
+        const detailRes = await directFetch(detailProxyUrl, {
+            headers: API_CONFIG.detail.headers,
+            signal: AbortSignal.timeout(10000)
+        });
+        
+        if (!detailRes.ok) {
+            console.warn('[API测试] 详情请求失败:', detailRes.status);
+            return result;
+        }
+        
+        let detailData;
+        try {
+            detailData = await detailRes.json();
+        } catch (e) {
+            console.warn('[API测试] 详情返回非JSON');
+            return result;
+        }
+        
+        // 从详情中提取播放地址
+        if (!detailData || !Array.isArray(detailData.list) || detailData.list.length === 0) {
+            console.warn('[API测试] 详情数据为空');
+            return result;
+        }
+        
+        const videoDetail = detailData.list[0];
+        let episodes = [];
+        
+        if (videoDetail.vod_play_url) {
+            const playSources = videoDetail.vod_play_url.split('$$$');
+            if (playSources.length > 0) {
+                const mainSource = playSources[0];
+                const episodeList = mainSource.split('#');
+                episodes = episodeList.map(ep => {
+                    const parts = ep.split('$');
+                    return parts.length > 1 ? parts[1] : '';
+                }).filter(url => url && (url.startsWith('http://') || url.startsWith('https://')));
+            }
+        }
+        
+        if (episodes.length === 0) {
+            console.warn('[API测试] 未找到播放地址');
+            return result;
+        }
+        
+        // 找 m3u8 或 mp4 链接
+        let m3u8Url = episodes.find(url => url.includes('.m3u8'));
+        if (!m3u8Url) {
+            const mp4Url = episodes.find(url => url.includes('.mp4'));
+            if (mp4Url) {
+                result.playable = true;
+                console.log('[API测试] 发现MP4播放链接, 可播放:', apiUrl);
+            }
+            return result;
+        }
+        
+        // ===== 3. M3U8 可用性验证 =====
+        try {
+            const m3u8ProxyUrl = await buildProxyUrl(m3u8Url);
+            const m3u8Res = await directFetch(m3u8ProxyUrl, {
+                signal: AbortSignal.timeout(10000)
+            });
+            
+            if (!m3u8Res.ok) {
+                console.warn('[API测试] M3U8 访问失败:', m3u8Res.status);
+                return result;
+            }
+            
+            const m3u8Text = await m3u8Res.text();
+            
+            if (!m3u8Text.includes('#EXTM3U')) {
+                console.warn('[API测试] M3U8 内容无效');
+                return result;
+            }
+            
+            // 检查嵌套 m3u8
+            const lines = m3u8Text.split('\n');
+            let nestedUrl = '';
+            for (let line of lines) {
+                line = line.trim();
+                if (line && !line.startsWith('#') && line.includes('.m3u8')) {
+                    nestedUrl = line.startsWith('http') ? line : new URL(line, m3u8Url).href;
+                    break;
+                }
+            }
+            
+            if (nestedUrl) {
+                // 有嵌套，请求子 m3u8
+                const nestedProxyUrl = await buildProxyUrl(nestedUrl);
+                const subRes = await directFetch(nestedProxyUrl, {
+                    signal: AbortSignal.timeout(10000)
+                });
+                if (subRes.ok) {
+                    const subText = await subRes.text();
+                    if (subText.includes('.ts') || subText.includes('.mp4') || subText.includes('.m3u8')) {
+                        result.playable = true;
+                        console.log('[API测试] 嵌套M3U8验证通过, 可播放:', apiUrl);
+                    }
+                }
+            } else {
+                // 非嵌套，直接检查
+                if (m3u8Text.includes('.ts') || m3u8Text.includes('.mp4') || m3u8Text.includes('URI=')) {
+                    result.playable = true;
+                    console.log('[API测试] M3U8直接包含切片, 可播放:', apiUrl);
+                }
+            }
+        } catch (m3u8Error) {
+            console.warn('[API测试] M3U8验证异常(可能跨域/防盗链):', m3u8Error.message);
+            // 搜索和详情都成功且有链接，但 m3u8 无法直接验证
+            // 大部分情况下播放器能播放（播放器有自己的代理机制）
+            // 所以标记为 playable，以宽松策略对待
+            result.playable = true;
+        }
+        
+        return result;
     } catch (error) {
-        console.error('站点可用性测试失败:', error);
-        return false;
+        console.error('[API测试] 综合测试失败:', error.message, apiUrl);
+        return result;
     }
 }

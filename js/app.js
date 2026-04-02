@@ -220,27 +220,50 @@ function renderCustomAPIsList() {
     customAPIs.forEach((api, index) => {
         const apiItem = document.createElement('div');
         apiItem.className = 'flex items-center justify-between p-1 mb-1 bg-[#222] rounded';
+        
+        // 获取状态
+        const status = apiStatusCache[api.url];
+        let statusDot;
+        if (typeof status === 'object') {
+            if (status.playable) {
+                statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5" title="完全正常 (连通、搜索、播放均成功)"></span>';
+            } else if (status.searchable) {
+                statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-yellow-500 mr-1.5" title="资源无效 (可访问、可搜索，但无可用播放链接)"></span>';
+            } else if (status.accessible) {
+                statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-orange-500 mr-1.5" title="数据为空 (可访问，但搜索无结果)"></span>';
+            } else {
+                statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5" title="离线 (无法访问API拉取信息)"></span>';
+            }
+        } else if (status === 'online') {
+            statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-1.5" title="在线"></span>';
+        } else if (status === 'offline') {
+            statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-red-500 mr-1.5" title="离线"></span>';
+        } else {
+            statusDot = '<span class="inline-block w-2 h-2 rounded-full bg-gray-600 mr-1.5" title="未测试"></span>';
+        }
+
         const textColorClass = api.isAdult ? 'text-pink-400' : 'text-white';
-        const adultTag = api.isAdult ? '<span class="text-xs text-pink-400 mr-1">(18+)</span>' : '';
+        const adultTag = api.isAdult ? '<span class="text-[10px] text-pink-400 mr-1 border border-pink-400/30 px-0.5 rounded">18+</span>' : '';
         // 新增 detail 地址显示
-        const detailLine = api.detail ? `<div class="text-xs text-gray-400 truncate">detail: ${api.detail}</div>` : '';
+        const detailLine = api.detail ? `<div class="text-[10px] text-gray-400 truncate opacity-70">Detail: ${api.detail}</div>` : '';
+        
         apiItem.innerHTML = `
             <div class="flex items-center flex-1 min-w-0">
                 <input type="checkbox" id="custom_api_${index}" 
-                       class="form-checkbox h-3 w-3 text-blue-600 mr-1 ${api.isAdult ? 'api-adult' : ''}" 
+                       class="form-checkbox h-3 w-3 text-blue-600 mr-2 ${api.isAdult ? 'api-adult' : ''}" 
                        ${selectedAPIs.includes('custom_' + index) ? 'checked' : ''} 
                        data-custom-index="${index}">
                 <div class="flex-1 min-w-0">
-                    <div class="text-xs font-medium ${textColorClass} truncate">
-                        ${adultTag}${api.name}
+                    <div class="flex items-center text-xs font-medium ${textColorClass} truncate">
+                        ${statusDot}${adultTag}${api.name}
                     </div>
-                    <div class="text-xs text-gray-500 truncate">${api.url}</div>
+                    <div class="text-[10px] text-gray-500 truncate mt-0.5">${api.url}</div>
                     ${detailLine}
                 </div>
             </div>
-            <div class="flex items-center">
-                <button class="text-blue-500 hover:text-blue-700 text-xs px-1" onclick="editCustomApi(${index})">✎</button>
-                <button class="text-red-500 hover:text-red-700 text-xs px-1" onclick="removeCustomApi(${index})">✕</button>
+            <div class="flex items-center ml-1">
+                <button class="text-blue-500 hover:text-blue-400 text-xs px-1" onclick="editCustomApi(${index})" title="编辑">✎</button>
+                <button class="text-red-500 hover:text-red-400 text-xs px-1" onclick="removeCustomApi(${index})" title="删除">✕</button>
             </div>
         `;
         container.appendChild(apiItem);
@@ -478,6 +501,160 @@ function removeCustomApi(index) {
     checkAdultAPIsSelected();
 
     showToast('已移除自定义API: ' + apiName, 'info');
+}
+
+// 显示批量添加表单
+function showBatchAddForm() {
+    const batchForm = document.getElementById('batchAddApiForm');
+    const singleForm = document.getElementById('addCustomApiForm');
+    if (batchForm) {
+        batchForm.classList.remove('hidden');
+        if (singleForm) singleForm.classList.add('hidden');
+    }
+}
+
+// 取消批量添加
+function cancelBatchAdd() {
+    const batchForm = document.getElementById('batchAddApiForm');
+    if (batchForm) {
+        batchForm.classList.add('hidden');
+        document.getElementById('batchApiContent').value = '';
+    }
+}
+
+// 批量添加自定义API
+async function batchAddCustomApis() {
+    const content = document.getElementById('batchApiContent').value.trim();
+    if (!content) {
+        showToast('请输入批量内容', 'warning');
+        return;
+    }
+
+    try {
+        let data;
+        // 尝试解析，兼容 JSON 和 JS 对象格式
+        const trimmedContent = content.trim();
+        if (trimmedContent.startsWith('{') || trimmedContent.startsWith('[')) {
+            try {
+                // 先尝试标准 JSON
+                data = JSON.parse(trimmedContent);
+            } catch (e) {
+                // 失败则尝试 JS 对象格式 (注意: 在浏览器端 eval 需谨慎，但此处为用户输入且在本地运行)
+                data = new Function('return ' + trimmedContent)();
+            }
+        } else {
+            throw new Error('无效的输入格式');
+        }
+
+        if (!data || typeof data !== 'object') {
+            throw new Error('数据必须是一个对象或数组');
+        }
+
+        let addedCount = 0;
+        let updatedCount = 0;
+
+        // 如果是对象格式 { zuid: { api: "...", name: "..." }, ... }
+        for (const key in data) {
+            const item = data[key];
+            if (!item || typeof item !== 'object') continue;
+
+            const name = item.name || key;
+            const url = item.api || item.url;
+            const detail = item.detail || '';
+            const isAdult = item.isAdult || item.adult || false;
+
+            if (!url) continue;
+
+            let cleanUrl = url.trim();
+            if (cleanUrl.endsWith('/')) cleanUrl = cleanUrl.slice(0, -1);
+
+            // 检查是否已存在 (以名称或 URL 为准判定重复)
+            const existingIndex = customAPIs.findIndex(api => (api.name === name || api.url === cleanUrl));
+            
+            if (existingIndex > -1) {
+                // 更新现有配置
+                customAPIs[existingIndex] = { name, url: cleanUrl, detail, isAdult };
+                updatedCount++;
+            } else {
+                // 新增配置
+                customAPIs.push({ name, url: cleanUrl, detail, isAdult });
+                // 默认选中新添加的
+                const newIndex = customAPIs.length - 1;
+                if (!selectedAPIs.includes('custom_' + newIndex)) {
+                    selectedAPIs.push('custom_' + newIndex);
+                }
+                addedCount++;
+            }
+        }
+
+        localStorage.setItem('customAPIs', JSON.stringify(customAPIs));
+        localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
+
+        renderCustomAPIsList();
+        updateSelectedApiCount();
+        checkAdultAPIsSelected();
+        
+        cancelBatchAdd();
+        showToast(`批量导入成功: 新增 ${addedCount} 个，更新 ${updatedCount} 个`, 'success');
+    } catch (error) {
+        console.error('批量添加失败:', error);
+        showToast('解析失败: ' + (error.message || '请检查格式是否正确'), 'error');
+    }
+}
+
+// API 状态缓存
+let apiStatusCache = {};
+
+// 测试所有自定义 API 可用性
+async function testAllCustomApis() {
+    if (customAPIs.length === 0) {
+        showToast('没有可测试的自定义API', 'info');
+        return;
+    }
+
+    showLoading('正在深度测试 API 可用性(包含连通、搜索与真实播放)...');
+    
+    // 并行测试
+    const testPromises = customAPIs.map(async (api) => {
+        const resultObj = await testApiConnectivity(api.url, api.detail);
+        apiStatusCache[api.url] = resultObj;
+        return resultObj;
+    });
+
+    await Promise.all(testPromises);
+    
+    renderCustomAPIsList();
+    hideLoading();
+    showToast('可用性测试完成', 'success');
+}
+
+// 测试单个 API 连接，验证其访问性、搜索性与播放性
+async function testApiConnectivity(apiUrl, detailUrl = '') {
+    try {
+        // 优先使用 api.js 中定义的全局测试函数，包含三维度检测
+        if (typeof window.testSiteAvailability === 'function') {
+            return await window.testSiteAvailability(apiUrl, detailUrl);
+        }
+        
+        // 备用实现 - 使用 _originalFetch 直接走 /proxy/ 路径
+        const directFetch = window._originalFetch || window.fetch;
+        const searchUrl = apiUrl + '?ac=videolist&wd=' + encodeURIComponent('test');
+        let proxyUrl = PROXY_URL + encodeURIComponent(searchUrl);
+        if (window.ProxyAuth && window.ProxyAuth.addAuthToProxyUrl) {
+            proxyUrl = await window.ProxyAuth.addAuthToProxyUrl(proxyUrl);
+        }
+        
+        const response = await directFetch(proxyUrl, {
+            signal: AbortSignal.timeout(8000)
+        });
+        
+        if (!response.ok) return { accessible: false, searchable: false, playable: false };
+        const data = await response.json();
+        const hasData = data && Array.isArray(data.list) && data.list.length > 0;
+        return { accessible: true, searchable: hasData, playable: false };
+    } catch (e) {
+        return { accessible: false, searchable: false, playable: false };
+    }
 }
 
 function toggleSettings(e) {

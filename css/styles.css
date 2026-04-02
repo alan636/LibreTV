@@ -434,21 +434,27 @@ body {
 }
 
 /* 添加自定义API表单动画 */
-#addCustomApiForm {
+#addCustomApiForm, #batchAddApiForm {
     transition: all 0.3s ease;
     max-height: 0;
     opacity: 0;
     overflow: hidden;
 }
 
-#addCustomApiForm.hidden {
-    max-height: 0;
-    padding: 0;
-    opacity: 0;
+#addCustomApiForm.hidden, #batchAddApiForm.hidden {
+    max-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    opacity: 0 !important;
 }
 
 #addCustomApiForm:not(.hidden) {
-    max-height: 230px;
+    max-height: 250px;
+    opacity: 1;
+}
+
+#batchAddApiForm:not(.hidden) {
+    max-height: 350px;
     opacity: 1;
 }
 
