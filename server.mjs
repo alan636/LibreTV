@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import logger from './logger.mjs';
 
 dotenv.config();
 
@@ -21,12 +22,6 @@ const config = {
   cacheMaxAge: process.env.CACHE_MAX_AGE || '1d',
   userAgent: process.env.USER_AGENT || 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
   debug: process.env.DEBUG === 'true'
-};
-
-const log = (...args) => {
-  if (config.debug) {
-    console.log('[DEBUG]', ...args);
-  }
 };
 
 const app = express();
@@ -78,7 +73,7 @@ app.get(['/', '/index.html', '/player.html'], async (req, res) => {
     const content = await renderPage(filePath, config.password);
     res.send(content);
   } catch (error) {
-    console.error('页面渲染错误:', error);
+    logger.error('FAIL', '页面渲染错误', error.message);
     res.status(500).send('读取静态页面失败');
   }
 });
@@ -89,7 +84,7 @@ app.get('/s=:keyword', async (req, res) => {
     const content = await renderPage(filePath, config.password);
     res.send(content);
   } catch (error) {
-    console.error('搜索页面渲染错误:', error);
+    logger.error('FAIL', '搜索页面渲染错误', error.message);
     res.status(500).send('读取静态页面失败');
   }
 });
@@ -98,20 +93,14 @@ function isValidUrl(urlString) {
   try {
     const parsed = new URL(urlString);
     const allowedProtocols = ['http:', 'https:'];
-    
-    // 从环境变量获取阻止的主机名列表
     const blockedHostnames = (process.env.BLOCKED_HOSTS || 'localhost,127.0.0.1,0.0.0.0,::1').split(',');
-    
-    // 从环境变量获取阻止的 IP 前缀
     const blockedPrefixes = (process.env.BLOCKED_IP_PREFIXES || '192.168.,10.,172.').split(',');
     
     if (!allowedProtocols.includes(parsed.protocol)) return false;
     if (blockedHostnames.includes(parsed.hostname)) return false;
-    
     for (const prefix of blockedPrefixes) {
       if (parsed.hostname.startsWith(prefix)) return false;
     }
-    
     return true;
   } catch {
     return false;
@@ -122,54 +111,43 @@ function isValidUrl(urlString) {
 function validateProxyAuth(req) {
   const authHash = req.query.auth;
   const timestamp = req.query.t;
-  
-  // 获取服务器端密码哈希
   const serverPassword = config.password;
+  
   if (!serverPassword) {
-    console.error('服务器未设置 PASSWORD 环境变量，代理访问被拒绝');
+    logger.warn('鉴权配置缺失', '未设置 PASSWORD 环境变量，禁用代理');
     return false;
   }
   
-  // 使用 crypto 模块计算 SHA-256 哈希
   const serverPasswordHash = crypto.createHash('sha256').update(serverPassword).digest('hex');
-  
   if (!authHash || authHash !== serverPasswordHash) {
-    console.warn('代理请求鉴权失败：密码哈希不匹配');
-    console.warn(`期望: ${serverPasswordHash}, 收到: ${authHash}`);
     return false;
   }
   
   // 验证时间戳（10分钟有效期）
   if (timestamp) {
     const now = Date.now();
-    const maxAge = 10 * 60 * 1000; // 10分钟
+    const maxAge = 10 * 60 * 1000;
     if (now - parseInt(timestamp) > maxAge) {
-      console.warn('代理请求鉴权失败：时间戳过期');
       return false;
     }
   }
-  
   return true;
 }
 
 app.get('/proxy/:encodedUrl', async (req, res) => {
-  const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
   const encodedUrl = req.params.encodedUrl;
   const targetUrl = decodeURIComponent(encodedUrl);
 
   try {
     // 验证鉴权
     if (!validateProxyAuth(req)) {
-      console.warn(`[${timestamp}] [AUTH_FAIL] 鉴权失败: ${targetUrl}`);
-      return res.status(401).json({
-        success: false,
-        error: '代理访问未授权'
-      });
+      logger.warn('[AUTH_FAIL] 鉴权失败', targetUrl);
+      return res.status(401).json({ success: false, error: '代理访问未授权' });
     }
 
     // 安全验证
     if (!isValidUrl(targetUrl)) {
-      console.warn(`[${timestamp}] [INVALID_URL] 非法URL: ${targetUrl}`);
+      logger.warn('[INVALID_URL] 非法URL', targetUrl);
       return res.status(400).send('无效的 URL');
     }
 
@@ -180,14 +158,13 @@ app.get('/proxy/:encodedUrl', async (req, res) => {
       'Cache-Control': 'no-cache'
     };
 
-    // 针对豆瓣的特殊伪装：绕过 418 和 403
+    // 针对豆瓣的特殊伪装
     if (targetUrl.includes('doubanio.com') || targetUrl.includes('douban.com')) {
       headers['Referer'] = 'https://movie.douban.com/';
       headers['Host'] = new URL(targetUrl).hostname;
     }
 
     const startTime = Date.now();
-    
     const response = await axios({
       method: 'get',
       url: targetUrl,
@@ -196,10 +173,8 @@ app.get('/proxy/:encodedUrl', async (req, res) => {
       headers: headers
     });
 
-    const duration = Date.now() - startTime;
-    console.log(`[${timestamp}] [SUCCESS] 代理完成 (${duration}ms): ${targetUrl}`);
+    logger.success(`代理完成: ${targetUrl}`, Date.now() - startTime);
 
-    // 转发必要的响应头
     const respHeaders = { ...response.headers };
     ['content-security-policy', 'cookie', 'set-cookie', 'x-frame-options', 'access-control-allow-origin'].forEach(h => delete respHeaders[h]);
     
@@ -214,7 +189,7 @@ app.get('/proxy/:encodedUrl', async (req, res) => {
     if (status === 403) errorMsg = '访问被拒绝 (Forbidden)';
     if (status === 418) errorMsg = '被识别为机器人 (I\'m a teapot)';
 
-    console.error(`[${timestamp}] [ERROR ${status}] ${errorMsg} | 目标: ${targetUrl}`);
+    logger.error(status, errorMsg, targetUrl);
     
     if (error.response) {
       res.status(status).send(`目标服务器返回错误: ${status}`);
@@ -229,7 +204,7 @@ app.use(express.static(path.join(__dirname), {
 }));
 
 app.use((err, req, res, next) => {
-  console.error('服务器错误:', err);
+  logger.error(500, '服务器内部错误', err.message);
   res.status(500).send('服务器内部错误');
 });
 
@@ -239,14 +214,14 @@ app.use((req, res) => {
 
 // 启动服务器
 app.listen(config.port, () => {
-  console.log(`服务器运行在 http://localhost:${config.port}`);
+  logger.info(`服务器运行在 http://localhost:${config.port}`);
   if (config.password !== '') {
-    console.log('用户登录密码已设置');
+    logger.info('安全运行模式: 访问控制已启用');
   } else {
-    console.log('警告: 未设置 PASSWORD 环境变量，用户将被要求设置密码');
+    logger.warn('警告: 未设置 PASSWORD 环境变量，处于低安全性模式');
   }
   if (config.debug) {
-    console.log('调试模式已启用');
-    console.log('配置:', { ...config, password: config.password ? '******' : '' });
+    logger.debug('配置概况:', { ...config, password: '******' });
   }
 });
+
