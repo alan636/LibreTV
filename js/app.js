@@ -1,5 +1,9 @@
 // 全局变量
-let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '["tyyszy","dyttzy", "bfzy", "ruyi"]'); // 默认选中资源
+// 改进：不再硬编码默认值，而是动态选取所有内置非成人API
+let selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '[]'); 
+if (selectedAPIs.length === 0 && typeof API_SITES !== 'undefined') {
+    selectedAPIs = Object.keys(API_SITES).filter(key => !API_SITES[key].adult);
+}
 let customAPIs = JSON.parse(localStorage.getItem('customAPIs') || '[]'); // 存储自定义API列表
 
 // 添加当前播放的集数索引
@@ -27,8 +31,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 设置默认API选择（如果是第一次加载）
     if (!localStorage.getItem('hasInitializedDefaults')) {
-        // 默认选中资源
-        selectedAPIs = ["tyyszy", "bfzy", "dyttzy", "ruyi"];
+        // 默认选中所有内置非成人资源
+        selectedAPIs = Object.keys(API_SITES).filter(key => !API_SITES[key].adult);
         localStorage.setItem('selectedAPIs', JSON.stringify(selectedAPIs));
 
         // 默认选中过滤开关

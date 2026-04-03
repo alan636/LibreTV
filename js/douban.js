@@ -821,11 +821,12 @@ window.loadIntelligentCover = async function(imgElement, title, originalCover) {
             });
         }
 
-        // 2. 其次：内置 API 的健康节点
+        // 2. 其次：内置 API (即使没有缓存，我们也认为它们是可信的)
         Object.values(gApiSites).forEach(api => {
             if (api && api.api) {
                 const s = gApiStatusCache[api.api];
-                if (s && (s.playable || s.searchable)) {
+                // 如果是健康的，或者还没来得及测试的，都加入优先序列
+                if (!s || s.accessible || s.searchable) {
                     priorityUrls.push(api.api);
                 }
             }
@@ -890,8 +891,21 @@ window.loadIntelligentCover = async function(imgElement, title, originalCover) {
         console.error(`[CoverLoader] ‼️ 严重崩溃:`, innerError);
     }
 
-    console.warn(`[CoverLoader] ↩️ "${title}" 智能回退失败，退守豆瓣官方图 (Referrer-less)`);
-    imgElement.src = originalCover;
+    console.warn(`[CoverLoader] ↩️ "${title}" 智能寻找失败，正在通过安全代理回退到豆瓣图...`);
+    
+    // 终极武器：将豆瓣原图 URL 直接通过本地代理中转，绕过 418
+    let finalFallbackUrl = originalCover;
+    try {
+        const proxyPrefix = window.PROXY_URL || '/proxy/';
+        finalFallbackUrl = proxyPrefix + encodeURIComponent(originalCover);
+        
+        // 如果有鉴权，加上鉴权
+        if (window.ProxyAuth && window.ProxyAuth.addAuthToProxyUrl) {
+            finalFallbackUrl = await window.ProxyAuth.addAuthToProxyUrl(finalFallbackUrl);
+        }
+    } catch(e) { /* fallback to original if proxy failed to format */ }
+
+    imgElement.src = finalFallbackUrl;
     imgElement.referrerPolicy = "no-referrer";
     imgElement.classList.add('object-contain');
 };
