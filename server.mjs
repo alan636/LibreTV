@@ -153,71 +153,73 @@ function validateProxyAuth(req) {
 }
 
 app.get('/proxy/:encodedUrl', async (req, res) => {
+  const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+  const encodedUrl = req.params.encodedUrl;
+  const targetUrl = decodeURIComponent(encodedUrl);
+
   try {
     // 验证鉴权
     if (!validateProxyAuth(req)) {
+      console.warn(`[${timestamp}] [AUTH_FAIL] 鉴权失败: ${targetUrl}`);
       return res.status(401).json({
         success: false,
-        error: '代理访问未授权：请检查密码配置或鉴权参数'
+        error: '代理访问未授权'
       });
     }
 
-    const encodedUrl = req.params.encodedUrl;
-    const targetUrl = decodeURIComponent(encodedUrl);
-
     // 安全验证
     if (!isValidUrl(targetUrl)) {
+      console.warn(`[${timestamp}] [INVALID_URL] 非法URL: ${targetUrl}`);
       return res.status(400).send('无效的 URL');
     }
 
-    log(`代理请求: ${targetUrl}`);
-
-    // 添加请求超时和重试逻辑
-    const maxRetries = config.maxRetries;
-    let retries = 0;
-    
-    const makeRequest = async () => {
-      try {
-        return await axios({
-          method: 'get',
-          url: targetUrl,
-          responseType: 'stream',
-          timeout: config.timeout,
-          headers: {
-            'User-Agent': config.userAgent
-          }
-        });
-      } catch (error) {
-        if (retries < maxRetries) {
-          retries++;
-          log(`重试请求 (${retries}/${maxRetries}): ${targetUrl}`);
-          return makeRequest();
-        }
-        throw error;
-      }
+    // 智能请求头伪装
+    const headers = {
+      'User-Agent': config.userAgent,
+      'Accept': '*/*',
+      'Cache-Control': 'no-cache'
     };
 
-    const response = await makeRequest();
+    // 针对豆瓣的特殊伪装：绕过 418 和 403
+    if (targetUrl.includes('doubanio.com') || targetUrl.includes('douban.com')) {
+      headers['Referer'] = 'https://movie.douban.com/';
+      headers['Host'] = new URL(targetUrl).hostname;
+    }
 
-    // 转发响应头（过滤敏感头）
-    const headers = { ...response.headers };
-    const sensitiveHeaders = (
-      process.env.FILTERED_HEADERS || 
-      'content-security-policy,cookie,set-cookie,x-frame-options,access-control-allow-origin'
-    ).split(',');
+    const startTime = Date.now();
     
-    sensitiveHeaders.forEach(header => delete headers[header]);
-    res.set(headers);
+    const response = await axios({
+      method: 'get',
+      url: targetUrl,
+      responseType: 'stream',
+      timeout: config.timeout,
+      headers: headers
+    });
 
-    // 管道传输响应流
+    const duration = Date.now() - startTime;
+    console.log(`[${timestamp}] [SUCCESS] 代理完成 (${duration}ms): ${targetUrl}`);
+
+    // 转发必要的响应头
+    const respHeaders = { ...response.headers };
+    ['content-security-policy', 'cookie', 'set-cookie', 'x-frame-options', 'access-control-allow-origin'].forEach(h => delete respHeaders[h]);
+    
+    res.set(respHeaders);
     response.data.pipe(res);
+
   } catch (error) {
-    console.error('代理请求错误:', error.message);
+    const status = error.response ? error.response.status : 'ECONN';
+    let errorMsg = error.message;
+    
+    if (status === 429) errorMsg = '触发频率限制 (Too Many Requests)';
+    if (status === 403) errorMsg = '访问被拒绝 (Forbidden)';
+    if (status === 418) errorMsg = '被识别为机器人 (I\'m a teapot)';
+
+    console.error(`[${timestamp}] [ERROR ${status}] ${errorMsg} | 目标: ${targetUrl}`);
+    
     if (error.response) {
-      res.status(error.response.status || 500);
-      error.response.data.pipe(res);
+      res.status(status).send(`目标服务器返回错误: ${status}`);
     } else {
-      res.status(500).send(`请求失败: ${error.message}`);
+      res.status(500).send(`请求异常: ${error.message}`);
     }
   }
 });
