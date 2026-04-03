@@ -336,6 +336,7 @@
     text-shadow: 0 2px 8px rgba(0,0,0,0.8);
     display: -webkit-box;
     -webkit-line-clamp: 5; /* 最多显示5行，防止撑破布局 */
+    line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

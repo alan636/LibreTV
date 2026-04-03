@@ -790,7 +790,7 @@ window.loadIntelligentCover = async function(imgElement, title, originalCover) {
     try {
         // 安全获取全局变量或从本地存储兜底
         const getGlobalSafely = (name) => {
-            try { return window[name] || null; } catch(e) { return null; }
+            try { return window[name] || null; } catch(_) { return null; }
         };
 
         let gApiStatusCache = getGlobalSafely('apiStatusCache') || {};
