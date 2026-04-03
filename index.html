@@ -15,7 +15,7 @@
     
     <script src="libs/tailwindcss.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/index.css?v=2.2">
 </head>
 <body class="page-bg text-white">
     <!-- 将历史记录按钮移到左上角，并缩小尺寸 -->
@@ -197,7 +197,7 @@
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-8 flex flex-col h-screen">
+    <div class="container mx-auto px-4 py-8 flex flex-col min-h-screen">
         <div class="flex-1 flex flex-col">
             <!-- 网站标志和口号 -->
             <header class="text-center mb-2">
@@ -255,19 +255,24 @@
                 </div>
             </div>
             
-            <!-- 豆瓣热门推荐区域: 默认隐藏，现在位于搜索区域下方，调整宽度 -->
+            <!-- 豆瓣热门推荐区域: 默认隐藏 -->
             <div id="doubanArea" class="w-full my-8 hidden">
-                <div class="mx-auto max-w-screen-xl px-2">
-                    <!-- 改进标题和标签区域布局 -->
+                <div class="douban-waterfall-container">
                     <div class="mb-4">
-                        <!-- 标题和刷新按钮一行 -->
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center">
-                                <h2 class="text-xl font-bold text-white mr-4">豆瓣热门</h2>
-                                <!-- 添加电影/电视剧切换开关 -->
+                        <!-- 标题和操作按钮 -->
+                        <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                            <div class="flex items-center flex-wrap gap-2">
+                                <h2 class="text-xl font-bold text-white mr-2">豆瓣热门</h2>
+                                <!-- 电影/电视剧切换 -->
                                 <div class="flex items-center bg-[#222] rounded-full p-1">
                                     <button id="douban-movie-toggle" class="px-3 py-1 text-sm rounded-full bg-pink-600 text-white">电影</button>
                                     <button id="douban-tv-toggle" class="px-3 py-1 text-sm rounded-full text-gray-300 hover:text-white">电视剧</button>
+                                </div>
+                                <!-- 排序按钮 -->
+                                <div class="flex items-center bg-[#222] rounded-full p-1">
+                                    <button id="sort-recommend" class="px-3 py-1 text-sm rounded-full bg-pink-600 text-white">热度</button>
+                                    <button id="sort-rank" class="px-3 py-1 text-sm rounded-full text-gray-300 hover:text-white">评分</button>
+                                    <button id="sort-time" class="px-3 py-1 text-sm rounded-full text-gray-300 hover:text-white">时间</button>
                                 </div>
                             </div>
                             <button id="douban-refresh" class="text-sm px-3 py-1 bg-pink-600 hover:bg-pink-700 text-white rounded-lg flex items-center gap-1">
@@ -277,14 +282,16 @@
                                 </svg>
                             </button>
                         </div>
-                        <!-- 分类标签独立成行，添加滚动支持以适应移动设备 -->
-                        <div class="overflow-x-auto pb-2">
-                            <div id="douban-tags" class="flex space-x-2 min-w-max"></div>
+                        <!-- 分类标签 -->
+                        <div class="pb-2">
+                            <div id="douban-tags" class="flex flex-wrap gap-2"></div>
                         </div>
                     </div>
                     
-                    <!-- 推荐内容 -->
-                    <div id="douban-results" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-3"></div>
+                    <!-- 瀑布流内容 -->
+                    <div id="douban-results" class="douban-waterfall-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:12px;"></div>
+                    <!-- 无限滚动哨兵 -->
+                    <div id="douban-sentinel" class="h-4"></div>
                 </div>
             </div>
             
@@ -407,6 +414,13 @@
             <p class="text-white text-lg">加载中...</p>
         </div>
     </div>
+
+    <!-- 返回顶部按钮 -->
+    <button id="backToTop" class="fixed bottom-8 right-8 z-30 w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 opacity-0 pointer-events-none" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);" aria-label="返回顶部">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+        </svg>
+    </button>
 
     <!-- JSON-LD 结构化数据 -->
     <script type="application/ld+json">

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>常驻信息流电影卡片 - LibreTV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --card-w: 200px;
+            --card-h: 300px;
+            --info-h: 60px; 
+            --hover-scale: 1.1;
+            --ease: cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        @media (max-width: 640px) {
+            :root {
+                --card-w: calc(50vw - 25px);
+                --card-h: calc((50vw - 25px) * 1.5);
+                --info-h: 55px;
+            }
+        }
+
+        body {
+            background-color: #020202;
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            color: #eee;
+            margin: 0;
+            padding: 20px;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, var(--card-w));
+            gap: 25px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center;
+            margin: 50px auto;
+        }
+
+        .movie-card {
+            position: relative;
+            width: var(--card-w);
+            height: var(--card-h);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: transform 0.5s var(--ease), z-index 0s 0.2s;
+            z-index: 1;
+            overflow: hidden;
+            background: #111;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* 核心逻辑：悬停动态 (Hover) */
+        @media (hover: hover) {
+            .movie-card:hover {
+                transform: scale(var(--hover-scale));
+                z-index: 100;
+                box-shadow: 0 20px 45px rgba(0,0,0,0.8);
+            }
+            .movie-card:hover .poster-img {
+                filter: brightness(0.3) blur(8px);
+                transform: scale(1.08); /* 稍微放大一点增加深度 */
+            }
+            /* 详细文字淡入 */
+            .movie-card:hover .center-desc {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            /* 底部常驻，不消失 */
+        }
+
+        /* 移动端展开状态 (Long Press) */
+        .movie-card.is-expanded {
+            transform: scale(var(--hover-scale)) !important;
+            z-index: 100 !important;
+        }
+        .movie-card.is-expanded .poster-img {
+            filter: brightness(0.3) blur(10px) !important;
+        }
+        .movie-card.is-expanded .center-desc {
+            opacity: 1 !important;
+            transform: translate(-50%, -50%) scale(1) !important;
+        }
+
+        /* 海报层 */
+        .poster-container {
+            position: absolute;
+            inset: 0;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .poster-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s var(--ease);
+        }
+
+        /* 底部信息条：常驻显示 */
+        .bottom-info-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 10px 14px;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.4) 80%, transparent 100%);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            transition: background 0.3s;
+        }
+
+        .movie-card:hover .bottom-info-bar {
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+        }
+
+        .rating-star {
+            color: #fbbf24;
+            font-size: 11px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .movie-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            max-width: 80%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* 年份：放在右下角 */
+        .movie-year {
+            position: absolute;
+            bottom: 12px;
+            right: 14px;
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.4);
+            letter-spacing: 0.5px;
+        }
+
+        /* 中间显示的详细内容 */
+        .center-desc {
+            position: absolute;
+            top: 45%; 
+            left: 50%;
+            width: 80%;
+            transform: translate(-50%, -40%) scale(0.95);
+            opacity: 0; /* 默认隐藏 */
+            pointer-events: none;
+            transition: all 0.4s var(--ease);
+            z-index: 10;
+            text-align: center;
+        }
+
+        .desc-text {
+            font-size: 11px;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.6;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+
+        .meta-tags {
+            font-size: 9px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="text-center mb-10 px-4">
+        <h2 class="text-2xl font-black mb-1">LibreTV <span class="text-pink-500">Fixed UI</span></h2>
+        <p class="text-gray-500 text-[10px] tracking-widest">底层信息固定 · 中心高斯淡入</p>
+    </header>
+
+    <div class="movie-grid">
+        <!-- 卡片 1 -->
+        <div class="movie-card" data-title="流浪地球 2">
+            <div class="poster-container">
+                <img src="https://img3.doubanio.com/view/photo/s_ratio_poster/public/p2873138805.webp" class="poster-img" alt="流浪地球2">
+            </div>
+            
+            <!-- 中间浮现层 -->
+            <div class="center-desc">
+                <div class="meta-tags">科幻 / 冒险 / 灾难</div>
+                <p class="desc-text line-clamp-4">
+                    人类在地球表面建造出巨大的推进器，寻找新家园。此时月球危机接踵而至，世界危在旦夕...
+                </p>
+            </div>
+
+            <!-- 底部常驻信息 -->
+            <div class="bottom-info-bar">
+                <div class="rating-star">★ 8.3</div>
+                <h3 class="movie-title">流浪地球 2</h3>
+                <div class="movie-year">2023</div>
+            </div>
+        </div>
+
+        <!-- 卡片 2 -->
+        <div class="movie-card" data-title="沙丘 2">
+            <div class="poster-container">
+                <img src="https://img1.doubanio.com/view/photo/s_ratio_poster/public/p2903332463.webp" class="poster-img" alt="沙丘2">
+            </div>
+            
+            <div class="center-desc">
+                <div class="meta-tags">剧情 / 科幻 / 冒险</div>
+                <p class="desc-text line-clamp-4">
+                    保罗加入了弗雷曼人，他必须在深爱的女人和宇宙的命运之间做出选择，开启复仇之路。
+                </p>
+            </div>
+
+            <div class="bottom-info-bar">
+                <div class="rating-star">★ 8.2</div>
+                <h3 class="movie-title">沙丘 2</h3>
+                <div class="movie-year">2024</div>
+            </div>
+        </div>
+
+        <!-- 卡片 3 -->
+        <div class="movie-card" data-title="哈利·波特与魔法石">
+            <div class="poster-container">
+                <img src="https://img9.doubanio.com/view/photo/s_ratio_poster/public/p443424603.webp" class="poster-img" alt="哈利波特">
+            </div>
+            
+            <div class="center-desc">
+                <div class="meta-tags">奇幻 / 冒险 / 悬疑</div>
+                <p class="desc-text line-clamp-4">
+                    一封特殊的录取通知书，改变了平凡少年哈利的人生。在这里，魔法不再是传说...
+                </p>
+            </div>
+
+            <div class="bottom-info-bar">
+                <div class="rating-star">★ 9.2</div>
+                <h3 class="movie-title">哈利·波特与魔法石</h3>
+                <div class="movie-year">2001</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.querySelectorAll('.movie-card').forEach(card => {
+            let pressTimer;
+            const LONG_PRESS_DURATION = 500;
+            let isLongPress = false;
+
+            const handleAction = () => {
+                const title = card.getAttribute('data-title');
+                console.log(`Action: ${title}`);
+            };
+
+            card.addEventListener('touchstart', (e) => {
+                isLongPress = false;
+                pressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    document.querySelectorAll('.movie-card').forEach(c => c.classList.remove('is-expanded'));
+                    card.classList.add('is-expanded');
+                    if (window.navigator.vibrate) window.navigator.vibrate(40);
+                }, LONG_PRESS_DURATION);
+            }, {passive: true});
+
+            card.addEventListener('touchend', (e) => {
+                clearTimeout(pressTimer);
+                if (!isLongPress) {
+                    if (card.classList.contains('is-expanded')) {
+                        card.classList.remove('is-expanded');
+                    } else {
+                        handleAction();
+                    }
+                }
+            });
+
+            card.addEventListener('touchmove', () => { clearTimeout(pressTimer); }, {passive: true});
+
+            card.addEventListener('click', (e) => {
+                if (e.pointerType === 'touch') return;
+                handleAction();
+            });
+        });
+
+        document.body.addEventListener('click', (e) => {
+            if (!e.target.closest('.movie-card')) {
+                document.querySelectorAll('.movie-card').forEach(c => c.classList.remove('is-expanded'));
+            }
+        });
+    </script>
+</body>
+</html>

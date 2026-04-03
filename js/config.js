@@ -22,12 +22,45 @@ const SITE_CONFIG = {
 
 // API站点配置
 const API_SITES = {
-    testSource: {
-        api: 'https://www.example.com/api.php/provide/vod',
-        name: '空内容测试源',
-        adult: true
+    jszy: { api: 'https://jszyapi.com/api.php/provide/vod/', name: '极速资源' },
+    wlzy: { api: 'https://collect.wolongzyw.com/api.php/provide/vod/', name: '卧龙资源' },
+    ikun: { api: 'https://ikunzyapi.com/api.php/provide/vod/', name: 'iKun资源' },
+    yhzy: { api: 'https://m3u8.apiyhzy.com/api.php/provide/vod/', name: '樱花资源' },
+    zdzy: { api: 'https://api.zuidapi.com/api.php/provide/vod/', name: '最大资源' },
+    wwdj: { api: 'https://wwzy.tv/api.php/provide/vod/', name: '旺旺短剧' },
+    wjzy: { api: 'https://api.wujinapi.me/api.php/provide/vod/', name: '无尽资源' },
+    bdzy: { api: 'https://api.apibdzy.com/api.php/provide/vod/', name: '百度云资源' },
+    dbzy: { api: 'https://dbzy.tv/api.php/provide/vod/', name: '豆瓣资源' },
+    mdzy: { api: 'https://www.mdzyapi.com/api.php/provide/vod/', name: '魔都资源' },
+    zy360: { api: 'https://360zy.com/api.php/provide/vod', name: '360资源' },
+    ffzy: { api: 'http://cj.ffzyapi.com/api.php/provide/vod/', name: '非凡资源' },
+    hnzy: { api: 'https://www.hongniuzy2.com/api.php/provide/vod/', name: '红牛资源' },
+    jyzy: { api: 'https://jinyingzy.com/api.php/provide/vod/', name: '金鹰资源' },
+    snzy: { 
+        api: 'https://suoniapi.com/api.php/provide/vod/', 
+        searchApi: 'https://suoniapi.com/index.php/ajax/suggest?mid=1&wd=',
+        name: '索尼资源' 
+    },
+    gszy: { 
+        api: 'https://api.guangsuapi.com/api.php/provide/vod/', 
+        searchApi: 'https://guangsuzy.com/index.php/ajax/suggest?mid=1&wd=',
+        name: '光速资源' 
+    },
+    tyys: { 
+        api: 'https://tyyszy.com/api.php/provide/vod', 
+        searchApi: 'https://tyyszy.com/index.php/ajax/suggest?mid=1&wd=',
+        name: '天涯资源' 
+    },
+    hhzy: { 
+        api: 'https://hhzyapi.com/api.php/provide/vod/', 
+        searchApi: 'https://hhzyapi.com/index.php/ajax/suggest?mid=1&wd=',
+        name: '火狐资源' 
+    },
+    snzy2: { 
+        api: 'https://suonizy.com/api.php/provide/vod/', 
+        searchApi: 'https://suonizy.com/index.php/ajax/suggest?mid=1&wd=',
+        name: '索尼资源2' 
     }
-    //ARCHIVE https://telegra.ph/APIs-08-12
 };
 
 // 定义合并方法
