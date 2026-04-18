@@ -1,5 +1,6 @@
 const selectedAPIs = JSON.parse(localStorage.getItem('selectedAPIs') || '[]');
 const customAPIs = JSON.parse(localStorage.getItem('customAPIs') || '[]'); // 存储自定义API列表
+const videoProxyStorageKey = window.VIDEO_PROXY_STORAGE_KEY || 'videoProxyEnabled';
 
 // 改进返回功能
 function goBack(event) {
@@ -64,7 +65,7 @@ window.addEventListener('load', function () {
     // 提取当前URL中的重要参数，以便在需要时能够恢复当前页面
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get('id');
-    const sourceCode = urlParams.get('source');
+    const sourceCode = urlParams.get('source') || urlParams.get('source_code');
 
     if (videoId && sourceCode) {
         // 保存当前播放状态，以便其他页面可以返回
@@ -94,8 +95,67 @@ let currentVideoUrl = ''; // 记录当前实际的视频URL
 const isWebkit = (typeof window.webkitConvertPointFromNodeToPage === 'function')
 Artplayer.FULLSCREEN_WEB_IN_BODY = true;
 
+function getCurrentSourceCode() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('source') || urlParams.get('source_code') || localStorage.getItem('currentSourceCode') || '';
+}
+
+function getVideoProxyState() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramValue = urlParams.get('videoProxy');
+    const localStorageValue = localStorage.getItem(videoProxyStorageKey);
+
+    let enabled;
+    if (paramValue === '1' || paramValue === 'true') {
+        enabled = true;
+    } else if (paramValue === '0' || paramValue === 'false') {
+        enabled = false;
+    } else {
+        enabled = localStorageValue === 'true';
+    }
+
+    return {
+        enabled,
+        paramValue,
+        localStorageValue
+    };
+}
+
+function shouldUseMediaProxy(sourceCode = getCurrentSourceCode()) {
+    return getVideoProxyState().enabled;
+}
+
+async function buildPlayableVideoUrl(videoUrl, sourceCode = getCurrentSourceCode()) {
+    if (!videoUrl || !shouldUseMediaProxy(sourceCode)) {
+        return videoUrl;
+    }
+
+    const rawProxyUrl = `${window.MEDIA_PROXY_URL || '/media-proxy/'}${encodeURIComponent(videoUrl)}`;
+    if (window.ProxyAuth && window.ProxyAuth.addAuthToProxyUrl) {
+        const proxiedUrl = await window.ProxyAuth.addAuthToProxyUrl(rawProxyUrl);
+        console.info('[LibreTV] 视频后端转发已启用', {
+            sourceCode,
+            videoUrl,
+            proxyUrl: proxiedUrl
+        });
+        return proxiedUrl;
+    }
+
+    console.info('[LibreTV] 视频后端转发已启用', {
+        sourceCode,
+        videoUrl,
+        proxyUrl: rawProxyUrl
+    });
+    return rawProxyUrl;
+}
+
 // 页面加载
 document.addEventListener('DOMContentLoaded', function () {
+    console.warn('[LibreTV] 播放器转发状态', {
+        ...getVideoProxyState(),
+        href: window.location.href
+    });
+
     // 先检查用户是否已通过密码验证
     if (!isPasswordVerified()) {
         // 隐藏加载提示
@@ -120,7 +180,7 @@ function initializePageContent() {
     const urlParams = new URLSearchParams(window.location.search);
     let videoUrl = urlParams.get('url');
     const title = urlParams.get('title');
-    const sourceCode = urlParams.get('source');
+    const sourceCode = urlParams.get('source') || urlParams.get('source_code') || localStorage.getItem('currentSourceCode') || '';
     let index = parseInt(urlParams.get('index') || '0');
     const episodesList = urlParams.get('episodes'); // 从URL获取集数信息
     const savedPosition = parseInt(urlParams.get('position') || '0'); // 获取保存的播放位置
@@ -223,7 +283,7 @@ function initializePageContent() {
 
     // 初始化播放器
     if (videoUrl) {
-        initPlayer(videoUrl);
+        void initPlayer(videoUrl, sourceCode);
     } else {
         showError('无效的视频链接');
     }
@@ -397,10 +457,12 @@ function showShortcutHint(text, direction) {
 }
 
 // 初始化播放器
-function initPlayer(videoUrl) {
+async function initPlayer(videoUrl, sourceCode = getCurrentSourceCode()) {
     if (!videoUrl) {
         return
     }
+
+    const playableUrl = await buildPlayableVideoUrl(videoUrl, sourceCode);
 
     // 销毁旧实例
     if (art) {
@@ -440,7 +502,7 @@ function initPlayer(videoUrl) {
     // Create new ArtPlayer instance
     art = new Artplayer({
         container: '#player',
-        url: videoUrl,
+        url: playableUrl,
         type: 'm3u8',
         title: videoTitle,
         volume: 0.8,
@@ -517,11 +579,11 @@ function initPlayer(videoUrl) {
                 let sourceElement = video.querySelector('source');
                 if (sourceElement) {
                     // 更新现有source元素的URL
-                    sourceElement.src = videoUrl;
+                    sourceElement.src = playableUrl;
                 } else {
                     // 创建新的source元素
                     sourceElement = document.createElement('source');
-                    sourceElement.src = videoUrl;
+                    sourceElement.src = playableUrl;
                     video.appendChild(sourceElement);
                 }
                 video.disableRemotePlayback = false;
@@ -885,7 +947,7 @@ function renderEpisodes() {
 }
 
 // 播放指定集数
-function playEpisode(index) {
+async function playEpisode(index) {
     // 确保index在有效范围内
     if (index < 0 || index >= currentEpisodes.length) {
         return;
@@ -913,10 +975,11 @@ function playEpisode(index) {
 
     // 获取 sourceCode
     const urlParams2 = new URLSearchParams(window.location.search);
-    const sourceCode = urlParams2.get('source_code');
+    const sourceCode = urlParams2.get('source') || urlParams2.get('source_code') || localStorage.getItem('currentSourceCode') || '';
 
     // 准备切换剧集的URL
     const url = currentEpisodes[index];
+    const playableUrl = await buildPlayableVideoUrl(url, sourceCode);
 
     // 更新当前剧集索引
     currentEpisodeIndex = index;
@@ -933,9 +996,9 @@ function playEpisode(index) {
     window.history.replaceState({}, '', currentUrl.toString());
 
     if (isWebkit) {
-        initPlayer(url);
+        await initPlayer(url, sourceCode);
     } else {
-        art.switch = url;
+        art.switch = playableUrl;
     }
 
     // 更新UI

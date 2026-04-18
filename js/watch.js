@@ -35,6 +35,8 @@ window.onload = function() {
     currentParams.forEach((value, key) => {
         playerUrlObj.searchParams.set(key, value);
     });
+
+    playerUrlObj.searchParams.set('_v', window.APP_ASSET_VERSION || '2.3');
     
     // 获取来源URL (如果存在)
     const referrer = document.referrer;

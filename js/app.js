@@ -5,6 +5,8 @@ if (selectedAPIs.length === 0 && typeof API_SITES !== 'undefined') {
     selectedAPIs = Object.keys(API_SITES).filter(key => !API_SITES[key].adult);
 }
 let customAPIs = JSON.parse(localStorage.getItem('customAPIs') || '[]'); // 存储自定义API列表
+const videoProxyStorageKey = window.VIDEO_PROXY_STORAGE_KEY || 'videoProxyEnabled';
+const appAssetVersion = window.APP_ASSET_VERSION || '2.3';
 
 // 添加当前播放的集数索引
 let currentEpisodeIndex = 0;
@@ -14,6 +16,10 @@ let currentEpisodes = [];
 let currentVideoTitle = '';
 // 全局变量用于倒序状态
 let episodesReversed = false;
+
+function isVideoProxyEnabled() {
+    return localStorage.getItem(videoProxyStorageKey) === 'true';
+}
 
 // 页面初始化
 document.addEventListener('DOMContentLoaded', function () {
@@ -38,6 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 默认选中过滤开关
         localStorage.setItem('yellowFilterEnabled', 'true');
         localStorage.setItem(PLAYER_CONFIG.adFilteringStorage, 'true');
+        localStorage.setItem(videoProxyStorageKey, 'false');
 
         // 默认启用豆瓣功能
         localStorage.setItem('doubanEnabled', 'true');
@@ -56,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const adFilterToggle = document.getElementById('adFilterToggle');
     if (adFilterToggle) {
         adFilterToggle.checked = localStorage.getItem(PLAYER_CONFIG.adFilteringStorage) !== 'false'; // 默认为true
+    }
+
+    const videoProxyToggle = document.getElementById('videoProxyToggle');
+    if (videoProxyToggle) {
+        videoProxyToggle.checked = localStorage.getItem(videoProxyStorageKey) === 'true';
     }
 
     // 设置事件监听器
@@ -324,28 +336,25 @@ function updateCustomApi(index) {
     renderCustomAPIsList();
     checkAdultAPIsSelected();
     restoreAddCustomApiButtons();
-    nameInput.value = '';
-    urlInput.value = '';
-    if (detailInput) detailInput.value = '';
-    if (isAdultInput) isAdultInput.checked = false;
-    document.getElementById('addCustomApiForm').classList.add('hidden');
+    resetCustomApiForm();
     showToast('已更新自定义API: ' + name, 'success');
 }
 
 // 取消编辑自定义API
 function cancelEditCustomApi() {
-    // 清空表单
+    resetCustomApiForm();
+    restoreAddCustomApiButtons();
+}
+
+function resetCustomApiForm() {
     document.getElementById('customApiName').value = '';
     document.getElementById('customApiUrl').value = '';
     document.getElementById('customApiDetail').value = '';
+
     const isAdultInput = document.getElementById('customApiIsAdult');
     if (isAdultInput) isAdultInput.checked = false;
 
-    // 隐藏表单
     document.getElementById('addCustomApiForm').classList.add('hidden');
-
-    // 恢复添加按钮
-    restoreAddCustomApiButtons();
 }
 
 // 恢复自定义API添加按钮
@@ -361,13 +370,13 @@ function restoreAddCustomApiButtons() {
 // 更新选中的API列表
 function updateSelectedAPIs() {
     // 获取所有内置API复选框
-    const builtInApiCheckboxes = document.querySelectorAll('#apiCheckboxes input:checked');
+    const builtInApiCheckboxes = document.querySelectorAll('#apiCheckboxes input[data-api]:checked');
 
     // 获取选中的内置API
     const builtInApis = Array.from(builtInApiCheckboxes).map(input => input.dataset.api);
 
     // 获取选中的自定义API
-    const customApiCheckboxes = document.querySelectorAll('#customApisList input:checked');
+    const customApiCheckboxes = document.querySelectorAll('#customApisList input[data-custom-index]:checked');
     const customApiIndices = Array.from(customApiCheckboxes).map(input => 'custom_' + input.dataset.customIndex);
 
     // 合并内置和自定义API
@@ -390,7 +399,7 @@ function updateSelectedApiCount() {
 
 // 全选或取消全选API
 function selectAllAPIs(selectAll = true, excludeAdult = false) {
-    const checkboxes = document.querySelectorAll('#apiCheckboxes input[type="checkbox"]');
+    const checkboxes = document.querySelectorAll('#apiCheckboxes input[data-api]');
 
     checkboxes.forEach(checkbox => {
         if (excludeAdult && checkbox.classList.contains('api-adult')) {
@@ -408,6 +417,12 @@ function selectAllAPIs(selectAll = true, excludeAdult = false) {
 function showAddCustomApiForm() {
     const form = document.getElementById('addCustomApiForm');
     if (form) {
+        restoreAddCustomApiButtons();
+        document.getElementById('customApiName').value = '';
+        document.getElementById('customApiUrl').value = '';
+        document.getElementById('customApiDetail').value = '';
+        const isAdultInput = document.getElementById('customApiIsAdult');
+        if (isAdultInput) isAdultInput.checked = false;
         form.classList.remove('hidden');
     }
 }
@@ -416,13 +431,7 @@ function showAddCustomApiForm() {
 function cancelAddCustomApi() {
     const form = document.getElementById('addCustomApiForm');
     if (form) {
-        form.classList.add('hidden');
-        document.getElementById('customApiName').value = '';
-        document.getElementById('customApiUrl').value = '';
-        document.getElementById('customApiDetail').value = '';
-        const isAdultInput = document.getElementById('customApiIsAdult');
-        if (isAdultInput) isAdultInput.checked = false;
-
+        resetCustomApiForm();
         // 确保按钮是添加按钮
         restoreAddCustomApiButtons();
     }
@@ -460,11 +469,7 @@ function addCustomApi() {
     renderCustomAPIsList();
     updateSelectedApiCount();
     checkAdultAPIsSelected();
-    nameInput.value = '';
-    urlInput.value = '';
-    if (detailInput) detailInput.value = '';
-    if (isAdultInput) isAdultInput.checked = false;
-    document.getElementById('addCustomApiForm').classList.add('hidden');
+    resetCustomApiForm();
     showToast('已添加自定义API: ' + name, 'success');
 }
 
@@ -735,6 +740,13 @@ function setupEventListeners() {
     if (adFilterToggle) {
         adFilterToggle.addEventListener('change', function (e) {
             localStorage.setItem(PLAYER_CONFIG.adFilteringStorage, e.target.checked);
+        });
+    }
+
+    const videoProxyToggle = document.getElementById('videoProxyToggle');
+    if (videoProxyToggle) {
+        videoProxyToggle.addEventListener('change', function (e) {
+            localStorage.setItem(videoProxyStorageKey, e.target.checked);
         });
     }
 }
@@ -1181,7 +1193,11 @@ function playVideo(url, vod_name, sourceCode, episodeIndex = 0, vodId = '') {
     let currentPath = window.location.href;
 
     // 构建播放页面URL，使用watch.html作为中间跳转页
-    let watchUrl = `watch.html?id=${vodId || ''}&source=${sourceCode || ''}&url=${encodeURIComponent(url)}&index=${episodeIndex}&title=${encodeURIComponent(vod_name || '')}`;
+    let watchUrl = `watch.html?id=${vodId || ''}&source=${sourceCode || ''}&url=${encodeURIComponent(url)}&index=${episodeIndex}&title=${encodeURIComponent(vod_name || '')}&_v=${encodeURIComponent(appAssetVersion)}`;
+
+    if (isVideoProxyEnabled()) {
+        watchUrl += '&videoProxy=1';
+    }
 
     // 添加返回URL参数
     if (currentPath.includes('index.html') || currentPath.endsWith('/')) {
@@ -1483,6 +1499,7 @@ async function exportConfig() {
         'customAPIs',
         'yellowFilterEnabled',
         'adFilteringEnabled',
+        videoProxyStorageKey,
         'doubanEnabled',
         'hasInitializedDefaults'
     ];

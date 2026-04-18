@@ -7,6 +7,7 @@ import fs from 'fs';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 import { createLogger } from './logger.mjs';
+import { isM3u8ContentType, isM3u8Text, looksLikeM3u8Url, rewriteM3u8Content } from './media-proxy-utils.mjs';
 
 dotenv.config();
 
@@ -179,6 +180,59 @@ function validateProxyAuth(req) {
   return { ok: true };
 }
 
+function buildUpstreamHeaders(req, targetUrl) {
+  const headers = {
+    'User-Agent': config.userAgent,
+    'Accept': req.headers.accept || '*/*',
+    'Accept-Language': req.headers['accept-language'] || 'zh-CN,zh;q=0.9,en;q=0.8',
+    'Cache-Control': 'no-cache',
+    'Referer': req.headers.referer || new URL(targetUrl).origin
+  };
+
+  const passThroughHeaders = ['range', 'if-range', 'if-none-match', 'if-modified-since'];
+  for (const headerName of passThroughHeaders) {
+    if (req.headers[headerName]) {
+      headers[headerName] = req.headers[headerName];
+    }
+  }
+
+  if (targetUrl.includes('doubanio.com') || targetUrl.includes('douban.com')) {
+    headers['Referer'] = 'https://movie.douban.com/';
+    headers['Host'] = new URL(targetUrl).hostname;
+  }
+
+  return headers;
+}
+
+function sanitizeProxyResponseHeaders(headers = {}, { rewritten = false } = {}) {
+  const responseHeaders = { ...headers };
+  [
+    'content-security-policy',
+    'cookie',
+    'set-cookie',
+    'x-frame-options',
+    'x-content-type-options',
+    'content-encoding',
+    'transfer-encoding',
+    'access-control-allow-origin'
+  ].forEach((headerName) => delete responseHeaders[headerName]);
+
+  if (rewritten) {
+    delete responseHeaders['content-length'];
+  }
+
+  return responseHeaders;
+}
+
+async function streamToText(stream) {
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  return Buffer.concat(chunks).toString('utf8');
+}
+
 app.get('/proxy/:encodedUrl', async (req, res) => {
   const encodedUrl = req.params.encodedUrl;
   const targetUrl = decodeURIComponent(encodedUrl);
@@ -260,6 +314,115 @@ app.get('/proxy/:encodedUrl', async (req, res) => {
       res.status(status).send(`目标服务器返回错误: ${status}`);
     } else {
       res.status(500).send(`请求异常: ${error.message}`);
+    }
+  }
+});
+
+app.get('/media-proxy/:encodedUrl', async (req, res) => {
+  const encodedUrl = req.params.encodedUrl;
+  const targetUrl = decodeURIComponent(encodedUrl);
+
+  try {
+    logger.info('收到视频转发请求', {
+      path: req.originalUrl,
+      targetUrl
+    });
+
+    const authResult = validateProxyAuth(req);
+    if (!authResult.ok) {
+      logger.warn('视频转发鉴权失败', {
+        tag: 'MEDIA_PROXY_AUTH_FAIL',
+        reason: authResult.reason,
+        targetUrl
+      });
+      return res.status(401).json({ success: false, error: '视频转发未授权' });
+    }
+
+    if (!isValidUrl(targetUrl)) {
+      logger.warn('视频转发目标无效', {
+        tag: 'MEDIA_PROXY_INVALID_URL',
+        targetUrl
+      });
+      return res.status(400).send('无效的 URL');
+    }
+
+    const startTime = Date.now();
+    const upstreamResponse = await axios({
+      method: req.method === 'HEAD' ? 'head' : 'get',
+      url: targetUrl,
+      responseType: 'stream',
+      timeout: config.timeout,
+      headers: buildUpstreamHeaders(req, targetUrl),
+      validateStatus: () => true
+    });
+
+    const contentType = upstreamResponse.headers['content-type'] || '';
+    const maybeM3u8Resource = isM3u8ContentType(contentType) || looksLikeM3u8Url(targetUrl);
+
+    if (maybeM3u8Resource && req.method !== 'HEAD') {
+      const rawM3u8 = await streamToText(upstreamResponse.data);
+      if (!isM3u8ContentType(contentType) && !isM3u8Text(rawM3u8)) {
+        return res
+          .status(upstreamResponse.status)
+          .set(sanitizeProxyResponseHeaders(upstreamResponse.headers, { rewritten: true }))
+          .send(rawM3u8);
+      }
+
+      const rewrittenM3u8 = rewriteM3u8Content(rawM3u8, targetUrl, {
+        proxyBasePath: '/media-proxy/',
+        authHash: req.query.auth || ''
+      });
+
+      logger.success('视频清单转发完成', {
+        targetUrl,
+        durationMs: Date.now() - startTime
+      });
+
+      return res
+        .status(upstreamResponse.status)
+        .set(sanitizeProxyResponseHeaders(upstreamResponse.headers, { rewritten: true }))
+        .type('application/vnd.apple.mpegurl')
+        .send(rewrittenM3u8);
+    }
+
+    logger.success('视频流转发完成', {
+      targetUrl,
+      status: upstreamResponse.status,
+      durationMs: Date.now() - startTime
+    });
+
+    res.status(upstreamResponse.status);
+    res.set(sanitizeProxyResponseHeaders(upstreamResponse.headers));
+
+    if (req.method === 'HEAD') {
+      return res.end();
+    }
+
+    upstreamResponse.data.on('error', (error) => {
+      logger.error('视频流写入失败', {
+        targetUrl,
+        error: error.message
+      });
+      if (!res.headersSent) {
+        res.status(502).end('视频流转发失败');
+      } else {
+        res.end();
+      }
+    });
+
+    upstreamResponse.data.pipe(res);
+  } catch (error) {
+    const status = error.response ? error.response.status : 502;
+    logger.error('视频转发失败', {
+      status,
+      error: error.message,
+      targetUrl
+    });
+
+    if (error.response) {
+      res.status(status).send(`目标服务器返回错误: ${status}`);
+    } else {
+      res.status(502).send(`视频转发异常: ${error.message}`);
     }
   }
 });

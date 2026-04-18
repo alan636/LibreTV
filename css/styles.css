@@ -317,12 +317,25 @@ body {
     background-color: var(--primary-color);
 }
 
+#videoProxyToggle:checked + .toggle-bg {
+    background-color: var(--primary-color);
+}
+
 #adFilterToggle:checked ~ .toggle-dot {
+    transform: translateX(1.5rem);
+}
+
+#videoProxyToggle:checked ~ .toggle-dot {
     transform: translateX(1.5rem);
 }
 
 #adFilterToggle:focus + .toggle-bg,
 #adFilterToggle:hover + .toggle-bg {
+    box-shadow: 0 0 0 2px rgba(0, 204, 255, 0.3);
+}
+
+#videoProxyToggle:focus + .toggle-bg,
+#videoProxyToggle:hover + .toggle-bg {
     box-shadow: 0 0 0 2px rgba(0, 204, 255, 0.3);
 }
 
@@ -340,6 +353,10 @@ body {
 }
 
 #adFilterToggle:checked ~ .toggle-dot {
+    box-shadow: 0 2px 4px rgba(0, 204, 255, 0.3);
+}
+
+#videoProxyToggle:checked ~ .toggle-dot {
     box-shadow: 0 2px 4px rgba(0, 204, 255, 0.3);
 }
 

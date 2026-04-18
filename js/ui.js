@@ -630,6 +630,8 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
 
         // 构造播放器URL
         let playerUrl;
+        const videoProxyEnabled = localStorage.getItem(window.VIDEO_PROXY_STORAGE_KEY || 'videoProxyEnabled') === 'true';
+        const assetVersion = window.APP_ASSET_VERSION || '2.3';
         const sourceNameForUrl = historyItem ? historyItem.sourceName : (new URLSearchParams(new URL(url, window.location.origin).search)).get('source');
         const sourceCodeForUrl = historyItem ? historyItem.sourceCode || historyItem.sourceName : (new URLSearchParams(new URL(url, window.location.origin).search)).get('source_code');
         const idForUrl = historyItem ? historyItem.vod_id : '';
@@ -646,6 +648,8 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
                 if (sourceNameForUrl) playerUrl += `&source=${encodeURIComponent(sourceNameForUrl)}`;
                 if (sourceCodeForUrl) playerUrl += `&source_code=${encodeURIComponent(sourceCodeForUrl)}`;
                 if (idForUrl) playerUrl += `&id=${encodeURIComponent(idForUrl)}`;
+                playerUrl += `&_v=${encodeURIComponent(assetVersion)}`;
+                if (videoProxyEnabled) playerUrl += '&videoProxy=1';
 
 
             } catch (e) {
@@ -654,6 +658,8 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
                 if (sourceNameForUrl) playerUrl += `&source=${encodeURIComponent(sourceNameForUrl)}`;
                 if (sourceCodeForUrl) playerUrl += `&source_code=${encodeURIComponent(sourceCodeForUrl)}`;
                 if (idForUrl) playerUrl += `&id=${encodeURIComponent(idForUrl)}`;
+                playerUrl += `&_v=${encodeURIComponent(assetVersion)}`;
+                if (videoProxyEnabled) playerUrl += '&videoProxy=1';
             }
         } else {
              // This case should ideally not happen if 'url' is always a player.html link from history
@@ -667,13 +673,18 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
             if (sourceNameForUrl) playUrl.searchParams.set('source', sourceNameForUrl);
             if (sourceCodeForUrl) playUrl.searchParams.set('source_code', sourceCodeForUrl);
             if (idForUrl) playUrl.searchParams.set('id', idForUrl);
+            playUrl.searchParams.set('_v', assetVersion);
+            if (videoProxyEnabled) playUrl.searchParams.set('videoProxy', '1');
             playerUrl = playUrl.toString();
         }
 
         showVideoPlayer(playerUrl);
     } catch (e) {
         // console.error('从历史记录播放失败:', e);
-        const simpleUrl = `player.html?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&index=${episodeIndex}`;
+        const videoProxyEnabled = localStorage.getItem(window.VIDEO_PROXY_STORAGE_KEY || 'videoProxyEnabled') === 'true';
+        const assetVersion = window.APP_ASSET_VERSION || '2.3';
+        let simpleUrl = `player.html?url=${encodeURIComponent(url)}&title=${encodeURIComponent(title)}&index=${episodeIndex}&_v=${encodeURIComponent(assetVersion)}`;
+        if (videoProxyEnabled) simpleUrl += '&videoProxy=1';
         showVideoPlayer(simpleUrl);
     }
 }

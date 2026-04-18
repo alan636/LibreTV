@@ -1,8 +1,11 @@
 // 全局常量配置
 const PROXY_URL = '/proxy/';    // 适用于 Cloudflare, Netlify (带重写), Vercel (带重写)
+const MEDIA_PROXY_URL = '/media-proxy/';
 // const HOPLAYER_URL = 'https://hoplayer.com/index.html';
 const SEARCH_HISTORY_KEY = 'videoSearchHistory';
 const MAX_HISTORY_ITEMS = 5;
+const VIDEO_PROXY_STORAGE_KEY = 'videoProxyEnabled';
+const APP_ASSET_VERSION = '2.3';
 
 // 密码保护配置
 // 注意：PASSWORD 环境变量是必需的，所有部署都必须设置密码以确保安全
@@ -71,6 +74,9 @@ function extendAPISites(newSites) {
 // 暴露到全局
 window.API_SITES = API_SITES;
 window.extendAPISites = extendAPISites;
+window.MEDIA_PROXY_URL = MEDIA_PROXY_URL;
+window.VIDEO_PROXY_STORAGE_KEY = VIDEO_PROXY_STORAGE_KEY;
+window.APP_ASSET_VERSION = APP_ASSET_VERSION;
 
 
 // 添加聚合搜索的配置选项
