@@ -1,4 +1,5 @@
 // functions/proxy/[[path]].js
+import { createLogger } from '../../logger.mjs';
 
 // --- 配置 (现在从 Cloudflare 环境变量读取) ---
 // 在 Cloudflare Pages 设置 -> 函数 -> 环境变量绑定 中设置以下变量:
@@ -27,6 +28,10 @@ const MEDIA_CONTENT_TYPES = ['video/', 'audio/', 'image/'];
 export async function onRequest(context) {
     const { request, env, next, waitUntil } = context; // next 和 waitUntil 可能需要
     const url = new URL(request.url);
+    const logger = createLogger({
+        scope: 'cloudflare-proxy',
+        debugEnabled: env.DEBUG === 'true'
+    });
 
     // 验证鉴权（主函数调用）
     const isValidAuth = await validateAuth(request, env);
@@ -81,7 +86,10 @@ export async function onRequest(context) {
         // 获取服务器端密码
         const serverPassword = env.PASSWORD;
         if (!serverPassword) {
-            console.error('服务器未设置 PASSWORD 环境变量，代理访问被拒绝');
+            logger.error('代理访问被拒绝', {
+                reason: 'missing_server_password',
+                message: '服务器未设置 PASSWORD 环境变量'
+            });
             return false;
         }
         
@@ -95,11 +103,15 @@ export async function onRequest(context) {
             const serverPasswordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             
             if (!authHash || authHash !== serverPasswordHash) {
-                console.warn('代理请求鉴权失败：密码哈希不匹配');
+                logger.warn('代理请求鉴权失败', {
+                    reason: 'auth_hash_mismatch'
+                });
                 return false;
             }
         } catch (error) {
-            console.error('计算密码哈希失败:', error);
+            logger.error('计算密码哈希失败', {
+                error
+            });
             return false;
         }
         
@@ -108,7 +120,9 @@ export async function onRequest(context) {
             const now = Date.now();
             const maxAge = 10 * 60 * 1000; // 10分钟
             if (now - parseInt(timestamp) > maxAge) {
-                console.warn('代理请求鉴权失败：时间戳过期');
+                logger.warn('代理请求鉴权失败', {
+                    reason: 'expired_timestamp'
+                });
                 return false;
             }
         }
@@ -131,7 +145,7 @@ export async function onRequest(context) {
     // 输出调试日志 (需要设置 DEBUG: true 环境变量)
     function logDebug(message) {
         if (DEBUG_ENABLED) {
-            console.log(`[Proxy Func] ${message}`);
+            logger.debug(message);
         }
     }
 

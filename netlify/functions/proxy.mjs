@@ -3,11 +3,13 @@
 import fetch from 'node-fetch';
 import { URL } from 'url'; // Use Node.js built-in URL
 import crypto from 'crypto'; // 导入 crypto 模块用于密码哈希
+import { createLogger } from '../../logger.mjs';
 
 // --- Configuration (Read from Environment Variables) ---
 const DEBUG_ENABLED = process.env.DEBUG === 'true';
 const CACHE_TTL = parseInt(process.env.CACHE_TTL || '86400', 10); // Default 24 hours
 const MAX_RECURSION = parseInt(process.env.MAX_RECURSION || '5', 10); // Default 5 levels
+const logger = createLogger({ scope: 'netlify-proxy', debugEnabled: DEBUG_ENABLED });
 
 // --- User Agent Handling ---
 let USER_AGENTS = [
@@ -20,15 +22,19 @@ try {
         const parsedAgents = JSON.parse(agentsJsonString);
         if (Array.isArray(parsedAgents) && parsedAgents.length > 0) {
             USER_AGENTS = parsedAgents;
-            console.log(`[Proxy Log Netlify] Loaded ${USER_AGENTS.length} user agents from environment variable.`);
+            logger.info('从环境变量加载 User-Agent 列表', {
+                count: USER_AGENTS.length
+            });
         } else {
-            console.warn("[Proxy Log Netlify] USER_AGENTS_JSON environment variable is not a valid non-empty array, using default.");
+            logger.warn('USER_AGENTS_JSON 无效，使用默认 User-Agent 列表');
         }
     } else {
-        console.log("[Proxy Log Netlify] USER_AGENTS_JSON environment variable not set, using default user agents.");
+        logger.info('未设置 USER_AGENTS_JSON，使用默认 User-Agent 列表');
     }
 } catch (e) {
-    console.error(`[Proxy Log Netlify] Error parsing USER_AGENTS_JSON environment variable: ${e.message}. Using default user agents.`);
+    logger.error('解析 USER_AGENTS_JSON 失败，使用默认 User-Agent 列表', {
+        error: e.message
+    });
 }
 const FILTER_DISCONTINUITY = false; // Ad filtering disabled
 
@@ -36,7 +42,7 @@ const FILTER_DISCONTINUITY = false; // Ad filtering disabled
 
 function logDebug(message) {
     if (DEBUG_ENABLED) {
-        console.log(`[Proxy Log Netlify] ${message}`);
+        logger.debug(message);
     }
 }
 
@@ -98,7 +104,10 @@ function validateAuth(event) {
     // 获取服务器端密码哈希
     const serverPassword = process.env.PASSWORD;
     if (!serverPassword) {
-        console.error('服务器未设置 PASSWORD 环境变量，代理访问被拒绝');
+        logger.error('代理访问被拒绝', {
+            reason: 'missing_server_password',
+            message: '服务器未设置 PASSWORD 环境变量'
+        });
         return false;
     }
     
@@ -106,7 +115,9 @@ function validateAuth(event) {
     const serverPasswordHash = crypto.createHash('sha256').update(serverPassword).digest('hex');
     
     if (!authHash || authHash !== serverPasswordHash) {
-        console.warn('代理请求鉴权失败：密码哈希不匹配');
+        logger.warn('代理请求鉴权失败', {
+            reason: 'auth_hash_mismatch'
+        });
         return false;
     }
     
@@ -115,7 +126,9 @@ function validateAuth(event) {
         const now = Date.now();
         const maxAge = 10 * 60 * 1000; // 10分钟
         if (now - parseInt(timestamp) > maxAge) {
-            console.warn('代理请求鉴权失败：时间戳过期');
+            logger.warn('代理请求鉴权失败', {
+                reason: 'expired_timestamp'
+            });
             return false;
         }
     }
@@ -188,10 +201,11 @@ async function processMasterPlaylist(url, content, recursionDepth) {
 
 // --- Netlify Handler ---
 export const handler = async (event, context) => {
-    console.log('--- Netlify Proxy Request ---');
-    console.log('Time:', new Date().toISOString());
-    console.log('Method:', event.httpMethod);
-    console.log('Path:', event.path);
+    logger.info('Netlify 代理请求开始', {
+        method: event.httpMethod,
+        path: event.path,
+        query: event.queryStringParameters || {}
+    });
     // Note: event.queryStringParameters contains query params if any
     // Note: event.headers contains incoming headers
 
@@ -217,7 +231,9 @@ export const handler = async (event, context) => {
 
     // --- 验证鉴权 ---
     if (!validateAuth(event)) {
-        console.warn('Netlify 代理请求鉴权失败');
+        logger.warn('Netlify 代理请求鉴权失败', {
+            path: event.path
+        });
         return {
             statusCode: 401,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -317,7 +333,11 @@ export const handler = async (event, context) => {
 
     } catch (error) {
         logDebug(`ERROR in proxy processing for ${targetUrl}: ${error.message}`);
-        console.error(`[Proxy Error Stack Netlify] ${error.stack}`); // Log full stack
+        logger.error('Netlify 代理处理失败', {
+            targetUrl,
+            error: error.stack || error.message,
+            status: error.status || 500
+        });
 
         const statusCode = error.status || 500; // Get status from error if available
 

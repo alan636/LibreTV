@@ -114,7 +114,13 @@ npm install
 npm run dev
 ```
 
-访问 `http://localhost:8080` 即可使用（端口可在.env文件中通过PORT变量修改）。
+访问 `http://localhost:8080` 即可使用（端口可在 `.env` 中通过 `HOST` 和 `PORT` 修改）。
+
+如果启动日志出现 `EACCES` 或 `EADDRINUSE`：
+- 优先确认 `HOST=127.0.0.1`
+- 更换一个未被占用的 `PORT`
+- 查看新的启动日志，服务会输出监听地址、端口和失败原因
+- 未显式配置 `PORT` 时，本地开发会自动回退到 `5173`、`3000`、`4173`
 
 > ⚠️ 注意：使用简单静态服务器（如 `python -m http.server` 或 `npx http-server`）时，视频代理功能将不可用，视频无法正常播放。完整功能测试请使用 Node.js 开发服务器。
 

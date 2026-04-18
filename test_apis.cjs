@@ -135,16 +135,33 @@ async function testSite(site) {
 }
 
 async function run() {
-    console.log("Starting script...");
+    const { createLogger } = await import('./logger.mjs');
+    const logger = createLogger({ scope: 'test-apis' });
+
+    logger.info('开始测试资源站点');
     const results = [];
     for (const [idx, site] of Object.entries(sites)) {
-        console.log(`[${parseInt(idx)+1}/${sites.length}] Testing ${site.name} : ${site.api}...`);
+        logger.info('测试资源站点', {
+            index: parseInt(idx, 10) + 1,
+            total: sites.length,
+            name: site.name,
+            api: site.api
+        });
         const r = await testSite(site);
         results.push(r);
-        console.log(`  -> Accessible: ${r.accessible}, RequiresAuth: ${r.requiresAuth}, SearchApi: ${r.searchApi}`);
+        logger.info('资源站点测试结果', {
+            name: site.name,
+            accessible: r.accessible,
+            requiresAuth: r.requiresAuth,
+            searchApi: r.searchApi,
+            error: r.error
+        });
     }
     fs.writeFileSync('api_results.json', JSON.stringify(results, null, 2));
-    console.log('Finished testing.');
+    logger.success('资源站点测试完成', {
+        outputFile: 'api_results.json',
+        total: results.length
+    });
 }
 
 run();

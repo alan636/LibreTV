@@ -3,11 +3,13 @@
 import fetch from 'node-fetch';
 import { URL } from 'url'; // 使用 Node.js 内置 URL 处理
 import crypto from 'crypto'; // 导入 crypto 模块用于密码哈希
+import { createLogger } from '../../logger.mjs';
 
 // --- 配置 (从环境变量读取) ---
 const DEBUG_ENABLED = process.env.DEBUG === 'true';
 const CACHE_TTL = parseInt(process.env.CACHE_TTL || '86400', 10); // 默认 24 小时
 const MAX_RECURSION = parseInt(process.env.MAX_RECURSION || '5', 10); // 默认 5 层
+const logger = createLogger({ scope: 'vercel-proxy', debugEnabled: DEBUG_ENABLED });
 
 // --- User Agent 处理 ---
 // 默认 User Agent 列表
@@ -23,16 +25,20 @@ try {
         // 检查解析结果是否为非空数组
         if (Array.isArray(parsedAgents) && parsedAgents.length > 0) {
             USER_AGENTS = parsedAgents; // 使用环境变量中的数组
-            console.log(`[代理日志] 已从环境变量加载 ${USER_AGENTS.length} 个 User Agent。`);
+            logger.info('已从环境变量加载 User-Agent 列表', {
+                count: USER_AGENTS.length
+            });
         } else {
-            console.warn("[代理日志] 环境变量 USER_AGENTS_JSON 不是有效的非空数组，使用默认值。");
+            logger.warn('USER_AGENTS_JSON 不是有效的非空数组，使用默认值');
         }
     } else {
-        console.log("[代理日志] 未设置环境变量 USER_AGENTS_JSON，使用默认 User Agent。");
+        logger.info('未设置 USER_AGENTS_JSON，使用默认 User-Agent');
     }
 } catch (e) {
     // 如果 JSON 解析失败，记录错误并使用默认值
-    console.error(`[代理日志] 解析环境变量 USER_AGENTS_JSON 出错: ${e.message}。使用默认 User Agent。`);
+    logger.error('解析 USER_AGENTS_JSON 出错，使用默认 User-Agent', {
+        error: e.message
+    });
 }
 
 // 广告过滤在代理中禁用，由播放器处理
@@ -43,7 +49,7 @@ const FILTER_DISCONTINUITY = false;
 
 function logDebug(message) {
     if (DEBUG_ENABLED) {
-        console.log(`[代理日志] ${message}`);
+        logger.debug(message);
     }
 }
 
@@ -310,7 +316,10 @@ async function validateAuth(req) {
     // 获取服务器端密码哈希
     const serverPassword = process.env.PASSWORD;
     if (!serverPassword) {
-        console.error('服务器未设置 PASSWORD 环境变量，代理访问被拒绝');
+        logger.error('代理访问被拒绝', {
+            reason: 'missing_server_password',
+            message: '服务器未设置 PASSWORD 环境变量'
+        });
         return false;
     }
     
@@ -318,7 +327,9 @@ async function validateAuth(req) {
     const serverPasswordHash = crypto.createHash('sha256').update(serverPassword).digest('hex');
     
     if (!authHash || authHash !== serverPasswordHash) {
-        console.warn('代理请求鉴权失败：密码哈希不匹配');
+        logger.warn('代理请求鉴权失败', {
+            reason: 'auth_hash_mismatch'
+        });
         return false;
     }
     
@@ -327,7 +338,9 @@ async function validateAuth(req) {
         const now = Date.now();
         const maxAge = 10 * 60 * 1000; // 10分钟
         if (now - parseInt(timestamp) > maxAge) {
-            console.warn('代理请求鉴权失败：时间戳过期');
+            logger.warn('代理请求鉴权失败', {
+                reason: 'expired_timestamp'
+            });
             return false;
         }
     }
@@ -338,11 +351,11 @@ async function validateAuth(req) {
 // --- Vercel Handler 函数 ---
 export default async function handler(req, res) {
     // --- 记录请求开始 ---
-    console.info('--- Vercel 代理请求开始 ---');
-    console.info('时间:', new Date().toISOString());
-    console.info('方法:', req.method);
-    console.info('URL:', req.url); // 原始请求 URL (例如 /proxy/...)
-    console.info('查询参数:', JSON.stringify(req.query)); // Vercel 解析的查询参数
+    logger.info('Vercel 代理请求开始', {
+        method: req.method,
+        url: req.url,
+        query: req.query
+    });
 
     // --- 提前设置 CORS 头 ---
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -351,7 +364,9 @@ export default async function handler(req, res) {
 
     // --- 处理 OPTIONS 预检请求 ---
     if (req.method === 'OPTIONS') {
-        console.info("处理 OPTIONS 预检请求");
+        logger.info('处理 OPTIONS 预检请求', {
+            url: req.url
+        });
         res.status(204).setHeader('Access-Control-Max-Age', '86400').end(); // 缓存预检结果 24 小时
         return;
     }
@@ -363,7 +378,9 @@ export default async function handler(req, res) {
         // --- 验证鉴权 ---
         const isAuthorized = await validateAuth(req);
         if (!isAuthorized) {
-            console.warn('代理请求鉴权失败');
+            logger.warn('代理请求鉴权失败', {
+                url: req.url
+            });
             res.status(401).json({
                 success: false,
                 error: '代理访问未授权：请检查密码配置或鉴权参数'
@@ -379,19 +396,31 @@ export default async function handler(req, res) {
         if (pathData) {
             if (Array.isArray(pathData)) {
                 encodedUrlPath = pathData.join('/'); // 重新组合
-                console.info(`从 req.query["...path"] (数组) 组合的编码路径: ${encodedUrlPath}`);
+                logger.info('从 req.query["...path"] 组合编码路径', {
+                    sourceType: 'array',
+                    encodedUrlPath
+                });
             } else if (typeof pathData === 'string') {
                 encodedUrlPath = pathData; // 也处理 Vercel 可能只返回字符串的情况
-                console.info(`从 req.query["...path"] (字符串) 获取的编码路径: ${encodedUrlPath}`);
+                logger.info('从 req.query["...path"] 获取编码路径', {
+                    sourceType: 'string',
+                    encodedUrlPath
+                });
             } else {
-                console.warn(`[代理警告] req.query["...path"] 类型未知: ${typeof pathData}`);
+                logger.warn('req.query["...path"] 类型未知', {
+                    sourceType: typeof pathData
+                });
             }
         } else {
-            console.warn(`[代理警告] req.query["...path"] 为空或未定义。`);
+            logger.warn('req.query["...path"] 为空或未定义', {
+                url: req.url
+            });
             // 备选：尝试从 req.url 提取（如果需要）
             if (req.url && req.url.startsWith('/proxy/')) {
                 encodedUrlPath = req.url.substring('/proxy/'.length);
-                console.info(`使用备选方法从 req.url 提取的编码路径: ${encodedUrlPath}`);
+                logger.info('使用 req.url 备选提取编码路径', {
+                    encodedUrlPath
+                });
             }
         }
 
@@ -402,7 +431,9 @@ export default async function handler(req, res) {
 
         // 解析目标 URL
         targetUrl = getTargetUrlFromPath(encodedUrlPath);
-        console.info(`解析出的目标 URL: ${targetUrl || 'null'}`); // 记录解析结果
+        logger.info('解析目标 URL', {
+            targetUrl: targetUrl || null
+        });
 
         // 检查目标 URL 是否有效
         if (!targetUrl) {
@@ -410,17 +441,23 @@ export default async function handler(req, res) {
             throw new Error(`无效的代理请求路径。无法从组合路径 "${encodedUrlPath}" 中提取有效的目标 URL。`);
         }
 
-        console.info(`开始处理目标 URL 的代理请求: ${targetUrl}`);
+        logger.info('开始处理目标 URL 的代理请求', {
+            targetUrl
+        });
 
         // --- 获取并处理目标内容 ---
         const { content, contentType, responseHeaders } = await fetchContentWithType(targetUrl, req.headers);
 
         // --- 如果是 M3U8，处理并返回 ---
         if (isM3u8Content(content, contentType)) {
-            console.info(`正在处理 M3U8 内容: ${targetUrl}`);
+            logger.info('正在处理 M3U8 内容', {
+                targetUrl
+            });
             const processedM3u8 = await processM3u8Content(targetUrl, content);
 
-            console.info(`成功处理 M3U8: ${targetUrl}`);
+            logger.success('成功处理 M3U8', {
+                targetUrl
+            });
             // 发送处理后的 M3U8 响应
             res.status(200)
                 .setHeader('Content-Type', 'application/vnd.apple.mpegurl;charset=utf-8')
@@ -432,7 +469,10 @@ export default async function handler(req, res) {
 
         } else {
             // --- 如果不是 M3U8，直接返回原始内容 ---
-            console.info(`直接返回非 M3U8 内容: ${targetUrl}, 类型: ${contentType}`);
+            logger.info('直接返回非 M3U8 内容', {
+                targetUrl,
+                contentType
+            });
 
             // 设置原始响应头，但排除有问题的头和 CORS 头（已设置）
             responseHeaders.forEach((value, key) => {
@@ -452,17 +492,18 @@ export default async function handler(req, res) {
 
     // ---- 结束主处理逻辑的 try 块 ----
     } catch (error) { // ---- 捕获处理过程中的任何错误 ----
-        // **检查这个错误是否是 "Assignment to constant variable"**
-        console.error(`[代理错误处理 V3] 捕获错误！目标: ${targetUrl || '解析失败'} | 错误类型: ${error.constructor.name} | 错误消息: ${error.message}`);
-        console.error(`[代理错误堆栈 V3] ${error.stack}`); // 记录完整的错误堆栈信息
+        logger.error('Vercel 代理处理失败', {
+            targetUrl: targetUrl || '解析失败',
+            errorType: error.constructor.name,
+            error: error.stack || error.message
+        });
 
-        // 特别标记 "Assignment to constant variable" 错误
         if (error instanceof TypeError && error.message.includes("Assignment to constant variable")) {
-             console.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-             console.error("捕获到 'Assignment to constant variable' 错误!");
-             console.error("请再次检查函数代码及所有辅助函数中，是否有 const 声明的变量被重新赋值。");
-             console.error("错误堆栈指向:", error.stack);
-             console.error("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+             logger.error('捕获到 Assignment to constant variable 错误', {
+                 targetUrl: targetUrl || '解析失败',
+                 hint: '请检查是否存在 const 变量被重新赋值',
+                 error: error.stack || error.message
+             });
         }
 
         // 尝试从错误对象获取状态码，否则默认为 500
@@ -479,7 +520,9 @@ export default async function handler(req, res) {
             });
         } else {
             // 如果响应头已发送，无法再发送 JSON 错误
-            console.error("[代理错误处理 V3] 响应头已发送，无法发送 JSON 错误响应。");
+            logger.error('响应头已发送，无法发送 JSON 错误响应', {
+                targetUrl
+            });
             // 尝试结束响应
              if (!res.writableEnded) {
                  res.end();
@@ -487,7 +530,9 @@ export default async function handler(req, res) {
         }
     } finally {
          // 记录请求处理结束
-         console.info('--- Vercel 代理请求结束 ---');
+         logger.info('Vercel 代理请求结束', {
+             url: req.url
+         });
     }
 }
 
