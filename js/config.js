@@ -63,7 +63,68 @@ const API_SITES = {
         api: 'https://suonizy.com/api.php/provide/vod/', 
         searchApi: 'https://suonizy.com/index.php/ajax/suggest?mid=1&wd=',
         name: '索尼资源2' 
-    }
+    },
+    auto_1777223706705_3: { 
+        api: 'http://cj.ffzyapi.com//api.php/provide/vod', 
+        searchApi: 'http://cj.ffzyapi.com//api.php/provide/vod?ac=videolist&wd=', 
+        name: '✅非凡┃影视' 
+    },
+    auto_1777223706705_4: { 
+        api: 'https://suoniapi.com/api.php/provide/vod/from/snm3u8', 
+        searchApi: 'https://suoniapi.com/index.php/ajax/suggest?mid=1&wd=from/snm3u8', 
+        name: '✅索尼┃影视' 
+    },
+    auto_1777223706705_5: { 
+        api: 'https://cj.rycjapi.com/api.php/provide/vod', 
+        searchApi: 'https://cj.rycjapi.com/api.php/provide/vod?ac=videolist&wd=', 
+        name: '🔥如意┃采集' 
+    },
+    auto_1777223706705_7: { 
+        api: 'https://zy.xiaomaomi.cc/api.php/provide/vod', 
+        searchApi: 'https://zy.xiaomaomi.cc/api.php/provide/vod?ac=videolist&wd=', 
+        name: '4K云盘接口(正则)' 
+    },
+    auto_1777223706705_8: { 
+        api: 'https://ckzy.me/api.php/provide/vod', 
+        searchApi: 'https://ckzy.me/index.php/ajax/suggest?mid=1&wd=', 
+        name: '4K云盘接口(正则)' 
+    },
+    auto_1777223706705_10: { 
+        api: 'https://api.wujinapi.com/api.php/provide/vod', 
+        searchApi: 'https://api.wujinapi.com/api.php/provide/vod?ac=videolist&wd=', 
+        name: '4K云盘接口(正则)' 
+    },
+    auto_1777223706705_11: { 
+        api: 'https://api.ukuapi.com/api.php/provide/vod', 
+        searchApi: 'https://api.ukuapi.com/api.php/provide/vod?ac=videolist&wd=', 
+        name: '4K云盘接口(正则)' 
+    },
+    auto_1777223706705_13: { 
+        api: 'https://yhzy.cc/api.php/provide/vod', 
+        searchApi: 'https://yhzy.cc/api.php/provide/vod?ac=videolist&wd=', 
+        name: '4K云盘接口(正则)' 
+    },
+    auto_1777223706705_15: { 
+        api: 'https://caiji.moduapi.cc/api.php/provide/vod/?ac=list', 
+        searchApi: 'https://caiji.moduapi.cc/api.php/provide/vod/?ac=list?ac=videolist&wd=', 
+        name: '🤣魔都┃动漫' 
+    },
+    auto_1777223706705_19: { 
+        api: 'https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkU9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3083f43a14e6b59f4bfe248478a3a8765b34bfdd/bilisong.txt', 
+        name: '[csp_WexNewBiLiGuard]  🅱‍哔哩NEW歌曲🅱‍' 
+    },
+    auto_1777223706705_20: { 
+        api: 'https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkE9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--47a8ff0e68559a89a9a75b37d09a2b0854dc5a8a/bili001.txt', 
+        name: '[csp_WexNewBiLiGuard]  🅱‍哔哩NEW合集🅱‍' 
+    },
+    auto_1777223706705_21: { 
+        api: 'http://38.47.213.61:41271/mogai_api.php/v1.vod', 
+        name: '[csp_AppYs] 🔥闪影┃秒播' 
+    },
+    auto_1777223706705_22: { 
+        api: 'https://api.ztcgi.com', 
+        name: '[csp_Jianpian] 🔥荐片┃磁力' 
+    },
 };
 
 // 定义合并方法

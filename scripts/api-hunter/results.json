@@ -1,0 +1,1569 @@
+{
+  "testedAt": "2026-04-26T16:59:01.356Z",
+  "summary": {
+    "total": 160,
+    "accessible": 23,
+    "withSearch": 17,
+    "authRequired": 0,
+    "failed": 137
+  },
+  "usable": [
+    {
+      "name": "非凡┃影视",
+      "api": "http://cj.ffzyapi.com/api.php/provide/vod",
+      "searchApi": "http://cj.ffzyapi.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "✅360┃资源",
+      "api": "https://360zy.com/api.php/provide/vod",
+      "searchApi": "https://360zy.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "✅红牛┃资源",
+      "api": "https://www.hongniuzy2.com/api.php/provide/vod",
+      "searchApi": "https://www.hongniuzy2.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "✅非凡┃影视",
+      "api": "http://cj.ffzyapi.com//api.php/provide/vod",
+      "searchApi": "http://cj.ffzyapi.com//api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "✅索尼┃影视",
+      "api": "https://suoniapi.com/api.php/provide/vod/from/snm3u8",
+      "searchApi": "https://suoniapi.com/index.php/ajax/suggest?mid=1&wd=from/snm3u8"
+    },
+    {
+      "name": "🔥如意┃采集",
+      "api": "https://cj.rycjapi.com/api.php/provide/vod",
+      "searchApi": "https://cj.rycjapi.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.guangsuapi.com/api.php/provide/vod",
+      "searchApi": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://zy.xiaomaomi.cc/api.php/provide/vod",
+      "searchApi": "https://zy.xiaomaomi.cc/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://ckzy.me/api.php/provide/vod",
+      "searchApi": "https://ckzy.me/index.php/ajax/suggest?mid=1&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.apibdzy.com/api.php/provide/vod",
+      "searchApi": "https://api.apibdzy.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.wujinapi.com/api.php/provide/vod",
+      "searchApi": "https://api.wujinapi.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.ukuapi.com/api.php/provide/vod",
+      "searchApi": "https://api.ukuapi.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://m3u8.apiyhzy.com/api.php/provide/vod",
+      "searchApi": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://yhzy.cc/api.php/provide/vod",
+      "searchApi": "https://yhzy.cc/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://collect.wolongzyw.com/api.php/provide/vod",
+      "searchApi": "https://collect.wolongzyw.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "🤣魔都┃动漫",
+      "api": "https://caiji.moduapi.cc/api.php/provide/vod/?ac=list",
+      "searchApi": "https://caiji.moduapi.cc/api.php/provide/vod/?ac=list?ac=videolist&wd="
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://ikunzyapi.com/api.php/provide/vod",
+      "searchApi": "https://ikunzyapi.com/api.php/provide/vod?ac=videolist&wd="
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://hhzyapi.com/api.php/provide/vod",
+      "searchApi": "https://hhzyapi.com/index.php/ajax/suggest?mid=1&wd="
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://suoniapi.com/api.php/provide/vod",
+      "searchApi": "https://suoniapi.com/index.php/ajax/suggest?mid=1&wd="
+    },
+    {
+      "name": "[csp_WexNewBiLiGuard]  🅱‍哔哩NEW歌曲🅱‍",
+      "api": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkU9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3083f43a14e6b59f4bfe248478a3a8765b34bfdd/bilisong.txt",
+      "searchApi": null
+    },
+    {
+      "name": "[csp_WexNewBiLiGuard]  🅱‍哔哩NEW合集🅱‍",
+      "api": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkE9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--47a8ff0e68559a89a9a75b37d09a2b0854dc5a8a/bili001.txt",
+      "searchApi": null
+    },
+    {
+      "name": "[csp_AppYs] 🔥闪影┃秒播",
+      "api": "http://38.47.213.61:41271/mogai_api.php/v1.vod",
+      "searchApi": null
+    },
+    {
+      "name": "[csp_Jianpian] 🔥荐片┃磁力",
+      "api": "https://api.ztcgi.com",
+      "searchApi": null
+    }
+  ],
+  "all": [
+    {
+      "name": "非凡┃影视",
+      "api": "http://cj.ffzyapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "✅360┃资源",
+      "api": "https://360zy.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "✅红牛┃资源",
+      "api": "https://www.hongniuzy2.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "✅非凡┃影视",
+      "api": "http://cj.ffzyapi.com//api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "✅索尼┃影视",
+      "api": "https://suoniapi.com/api.php/provide/vod/from/snm3u8",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "https://suoniapi.com/index.php/ajax/suggest?mid=1&wd=from/snm3u8",
+      "error": null
+    },
+    {
+      "name": "🔥如意┃采集",
+      "api": "https://cj.rycjapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.guangsuapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://zy.xiaomaomi.cc/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://ckzy.me/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "https://ckzy.me/index.php/ajax/suggest?mid=1&wd=",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.apibdzy.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.wujinapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.ukuapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://m3u8.apiyhzy.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://yhzy.cc/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://collect.wolongzyw.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "🤣魔都┃动漫",
+      "api": "https://caiji.moduapi.cc/api.php/provide/vod/?ac=list",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://ikunzyapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "standard",
+      "error": null
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://hhzyapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "https://hhzyapi.com/index.php/ajax/suggest?mid=1&wd=",
+      "error": null
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://suoniapi.com/api.php/provide/vod",
+      "source": "Previous",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": "https://suoniapi.com/index.php/ajax/suggest?mid=1&wd=",
+      "error": null
+    },
+    {
+      "name": "[csp_DoubanGuard] ⬇️【网盘类先扫码】⬇️",
+      "api": "https://cdn.waimaimingtang.com/file/images/bwc/20260414181247-ae51abfbfe.txt",
+      "source": "公众号【王二小放牛娃】 (http://tv.999888987.xyz) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_WexNewBiLiGuard]  🅱‍哔哩NEW歌曲🅱‍",
+      "api": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkU9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3083f43a14e6b59f4bfe248478a3a8765b34bfdd/bilisong.txt",
+      "source": "公众号【王二小放牛娃】 (http://tv.999888987.xyz) (Spider Ext)",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": null
+    },
+    {
+      "name": "[csp_WexNewBiLiGuard]  🅱‍哔哩NEW合集🅱‍",
+      "api": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkE9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--47a8ff0e68559a89a9a75b37d09a2b0854dc5a8a/bili001.txt",
+      "source": "公众号【王二小放牛娃】 (http://tv.999888987.xyz) (Spider Ext)",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": null
+    },
+    {
+      "name": "[csp_Douban] 豆瓣｜推荐",
+      "api": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/2026/douban.json",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_zhiqiu] 听风｜知秋",
+      "api": "https://fishapi.wya6.com/fish/zhiqiu.php",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_AppRJ] 💡热播｜影视",
+      "api": "http://v.rbotv.cn",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_YunPanBa] 盘吧｜4K",
+      "api": "https://yunpan6.com",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_YsSo] 奕搜｜4K",
+      "api": "https://ysso.cc",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Hxq] 👑韩圈｜影视",
+      "api": "https://fishapi.wya6.com/fish/fishhxq.php",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_CZ] 厂长｜影视",
+      "api": "https://www.czzymovie.com",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_WenCai] 文才｜影视",
+      "api": "https://www.tjrongze.com,https://y2s52n7.com,https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.jiabaide.cn",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_Zxzj] 在线｜影视",
+      "api": "https://www.zxzjhd.com",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_MqTv] 麻雀｜影视",
+      "api": "https://www.mqtv.cc",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Timeout"
+    },
+    {
+      "name": "[csp_Kanqiu] 看球｜体育",
+      "api": "http://www.88kanqiu.one",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_TingBook] 六月｜有声",
+      "api": "https://app.365ting.com",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_TingBookJinXia] 堇夏｜有声",
+      "api": "https://m.ting15.com",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_FishDrive] 摸鱼｜媒体库",
+      "api": "https://tc-new.z.wiki/autoupload/iYHTWVx6T8RrCmqdGD6MOdiO_OyvX7mIgxFBfDMDErs/2026/fishdrive.json",
+      "source": "摸鱼接口 (http://我不是.摸鱼儿.com) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_Hmys] 拾光┃秒播APP",
+      "api": "https://dy.stxbed.com",
+      "source": "巧技接口 (http://cdn.qiaoji8.com/tvbox.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Notice] 📢公告❤更新04.24❤",
+      "api": "https://xn--xkkx-rp5imh.v.nxog.top/m/公告?b=xk欧歌kx",
+      "source": "欧歌单线路接口 (https://xn--xkkx-rp5imh.v.nxog.top/api.php?id=3) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Duopan] 🐲接口失效",
+      "api": "https://woog.nxog.eu.org",
+      "source": "欧歌免费 (https://tv.nxog.top/m/111.php?ou=公众号欧歌app&mz=index&jar=index&123&b=tv) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 520"
+    },
+    {
+      "name": "[csp_Duopan] 🐲关注公众号",
+      "api": "https://ogkk.nxog.eu.org",
+      "source": "欧歌免费 (https://tv.nxog.top/m/111.php?ou=公众号欧歌app&mz=index&jar=index&123&b=tv) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 520"
+    },
+    {
+      "name": "[csp_Market] 🛒本地包更新",
+      "api": "https://xn--xkkx-rp5imh.v.nxog.top/zm/sd?b=xk欧歌kx",
+      "source": "欧歌单线路接口 (https://xn--xkkx-rp5imh.v.nxog.top/api.php?id=3) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_Living] 🐼┃游戏┃直播",
+      "api": "https://lemonlive-api-1.deno.dev",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "[csp_Duopan] ⚡┃闪电┃优汐",
+      "api": "https://shandian.blog",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_Duopan] 🖍︎┃蜡笔┃影视",
+      "api": "http://xiaocge.fun",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Duopan] 💌┃️至臻┃影视",
+      "api": "https://pan.mihdr.top",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 肥猫┃APP",
+      "api": "https://wsapi.dafenqi.mom/yuming.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_AppGet] 🍚┃干饭┃APP",
+      "api": "http://www.613mf4k12.top",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_AppQi] 光盘┃APP",
+      "api": "https://uututv-1319209748.cos.ap-shanghai.myqcloud.com/uutuv4.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 行动┃APP",
+      "api": "http://165.99.42.137:5432",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] ✌️┃再来┃APP",
+      "api": "https://cy.baige.asia",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_AppGet] 🥣┃一碗┃APP",
+      "api": "https://vv.229d.cn",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 👑王子｜影视",
+      "api": "https://app.95112475.xyz",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 耗子┃APP",
+      "api": "http://xywlkj.oss-cn-beijing.aliyuncs.com/wp-content/uploads/2024/12/1.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 蔬菜┃APP",
+      "api": "https://gitee.com/wmmoliill/wimg/raw/master/img/bk/9.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 🐼┃黑猫┃APP",
+      "api": "https://qiyiys.cc",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Timeout"
+    },
+    {
+      "name": "[csp_AppGet] 兔子┃APP",
+      "api": "https://dyyztvappapigoodgx.68.gy:12689/ciwk28vu38io8/apiurl.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 永永┃APP",
+      "api": "https://bind.315999.xyz/89.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Wwys] 💡农民｜影视",
+      "api": "https://vip.wwgz.cn:5200",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Jianpian] 🎬┃荐片┃影视",
+      "api": "https://ev2089.zxbwv.com",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_SaoHuo] 💡骚火｜影视",
+      "api": "https://shdy5.us",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 522"
+    },
+    {
+      "name": "[csp_Czsapp] 🏭┃厂长┃影视",
+      "api": "https://www.cz01.org",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_Dm84] 🤣┃动漫┃巴士",
+      "api": "https://dm84.net",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 522"
+    },
+    {
+      "name": "[csp_AppGet] 丫丫┃动漫",
+      "api": "http://tv.yy-fun.cc",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_MiSou] 🌖┃米搜┃网盘",
+      "api": "http://127.0.0.1:9978/file/fatcat/kk.txt",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_PanSearch] 🚃┃盘搜┃网盘",
+      "api": "http://127.0.0.1:9978/file/fatcat/token.txt",
+      "source": "肥猫线路 (http://肥猫.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_SixVGuard] 🧲新6V┃磁力",
+      "api": "https://www.xb6v.com",
+      "source": "饭太硬（备用） (http://fty.888484.xyz/tv) [JPEG隐写] (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 干饭┃APP",
+      "api": "http://122.114.171.79:568/huohushipin.txt",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 优优┃APP",
+      "api": "https://ios.hgyx.vip",
+      "source": "菜妮丝XBPQ接口 (https://tv.xn--yhqu5zs87a.top) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_PanWebShare] 💖木偶┃4K💖",
+      "api": "https://gitee.com/jiandan1232/58/raw/master/pancms/muou.json",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_PanWebShare] 💖二小┃4K弹幕💖",
+      "api": "https://gitee.com/jiandan1232/58/raw/master/pancms/erxiao.json",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_PanWebShare] 💖至臻┃4K弹幕💖",
+      "api": "https://gitee.com/jiandan1232/58/raw/master/pancms/Test.json",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_PanWebShare] 💖玩偶┃4K弹幕💖",
+      "api": "https://gitee.com/jiandan1232/58/raw/master/pancms/wanou.json",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_Market] 🛒本地包更新",
+      "api": "http://47.120.41.246:8025/vip/jar/bendi.php",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_AppGet] 💥可以｜1080P",
+      "api": "https://yzysap.oss-cn-hangzhou.aliyuncs.com/APP.txt",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "[csp_AppGet] 🐭仓鼠｜1080P",
+      "api": "https://qjappcms410.xy4k.com",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_AppYs] 🔥闪影┃秒播",
+      "api": "http://38.47.213.61:41271/mogai_api.php/v1.vod",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": null
+    },
+    {
+      "name": "[csp_Jianpian] 🔥荐片┃磁力",
+      "api": "https://api.ztcgi.com",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": true,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": null
+    },
+    {
+      "name": "[csp_AppGet] 🔥火狐丨APP",
+      "api": "http://huohu.yihn.cc",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Jpys] 💡金牌｜影视",
+      "api": "https://m.hkybqufgh.com,https://m.sizhengxt.com,https://m.9zhoukj.com,https://m.sizhengxt.com,https://m.jiabaide.cn",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_XYQHiker] 💝影港┃4K",
+      "api": "http://www.meowtv.cn/xp/meow.php?file=ygcl",
+      "source": "影视仓 (http://影视仓.com/) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_JianPian] 🧲荐片┃磁力",
+      "api": "http://api2.rinhome.com",
+      "source": "公众号【非凡小小】 (https://g.3344550.xyz/https://raw.githubusercontent.com/jigedos/1024/master/jsm.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_SixV] 新6V磁力",
+      "api": "http://www.xb6v.com",
+      "source": "传说blog (https://chuanshuo.77blog.cn/tv.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Bili] 哔哔合集",
+      "api": "https://gitlab.com/fantaiying/ext/-/raw/main/bilibili.json",
+      "source": "传说blog (https://chuanshuo.77blog.cn/tv.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_WebVidHub] ✅视频┃影视",
+      "api": "https://vidhub1.cc",
+      "source": "公众号【非凡小小】 (https://g.3344550.xyz/https://raw.githubusercontent.com/jigedos/1024/master/jsm.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Ikanbot] ✅机器┃影视",
+      "api": "https://v.aikanbot.com",
+      "source": "公众号【非凡小小】 (https://g.3344550.xyz/https://raw.githubusercontent.com/jigedos/1024/master/jsm.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppRZ] ✅忍者┃影视",
+      "api": "http://rzys.xyz",
+      "source": "公众号【非凡小小】 (https://g.3344550.xyz/https://raw.githubusercontent.com/jigedos/1024/master/jsm.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "✅量子┃影视",
+      "api": "https://cj.lziapi.com/api.php/provide/vod/at/xml",
+      "source": "公众号【非凡小小】 (https://g.3344550.xyz/https://raw.githubusercontent.com/jigedos/1024/master/jsm.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 400"
+    },
+    {
+      "name": "[csp_XBPQ] 南瓜影视",
+      "api": "https://www.ngys8.com/vodshow/id/{cateId}/page{catePg}.html",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "[csp_XBiu] 在线之家(XBiu)",
+      "api": "http://home.jundie.top:666/json/XBiu/zxzj.json",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_XBiu] AUETE(XBiu)",
+      "api": "http://home.jundie.top:666/json/XBiu/auete.json",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_XBiu] 蓝光影院(XBiu)",
+      "api": "https://lgyy.tv/vodshow/{cateId}--------{catePg}---.html",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_XBiu] 真不卡(XBiu)",
+      "api": "https://www.zbkk.net/vodshow/{cateId}--------{catePg}---.html",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Timeout"
+    },
+    {
+      "name": "[csp_XBiu] 影视工厂(XBiu)",
+      "api": "https://www.ysgc.fun/vodtype/{cateId}-{catePg}.html",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_XBiu] cokemv(XBiu)",
+      "api": "https://cokemv.me/vodshow/{cateId}--------{catePg}---.html",
+      "source": "俊哥接口 (http://home.jundie.top:81/top98.json) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 502"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.zycaiji.net:7788/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.200121.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://cj.lziapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 400"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://zy.yilans.net:8090/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://caiji.nxflv.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://www.zycaiji.net:7788/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://app.reboju.net/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://vipmv.cc/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://www.kuaibozy.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://gfzycj.hnmj.vip/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://anltv.cn/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://124.222.83.15:88/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Timeout"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://zl.chinafix.wang/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://mzkj.maccms.cf/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.77diany.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Timeout"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://api.nguonphim.tv/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://47.113.126.237:1234/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://www.zzrhgg.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://m3u8.feisuzyapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://fszy1.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://api.fqzy.cc/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.tiankongapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 525"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://m3u8.tiankongapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 525"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.sszyapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://foxzy.net/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.foxzyapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.bdxapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.39kan.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 523"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.bofangya.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://api.kuapi.cc/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://xiangkanzy.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://m3u8.xiangkanapi.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.ylzy1.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://www.zitv.cc/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://cj.vodimg.top/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://qkmp4.cn/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.pgcms10.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://m3u8.songshuzy.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://gqcyy.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://47.97.68.224/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://shangjihuoke.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://ikaola.tv/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Timeout"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "http://www.rrzyw.cc/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "4K云盘接口(正则)",
+      "api": "https://www.rrvipw.com/api.php/provide/vod",
+      "source": "4K云盘接口 (https://9xi4o.tk/0725.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "http://xh1.xn--yetu07f.icu/api.php/provide/vod",
+      "source": "小盒子4K (http://xhztv.top/4k.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://video.adminqt.cn/api.php/provide/vod",
+      "source": "小盒子4K (http://xhztv.top/4k.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://xzcjz.com/api.php/provide/vod",
+      "source": "小盒子4K (http://xhztv.top/4k.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "小盒子4K(正则)",
+      "api": "https://cj.lziapi.com/api.php/provide/vod",
+      "source": "小盒子4K (http://xhztv.top/4k.json)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 400"
+    },
+    {
+      "name": "[csp_Notice] 📢公告❤更新04.16❤",
+      "api": "https://tv.nxog.top/m/公告?b=tv",
+      "source": "欧歌免费 (https://tv.nxog.top/m/111.php?ou=公众号欧歌app&mz=index&jar=index&123&b=tv) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Duopan] 🐲玩歌｜4K弹幕",
+      "api": "https://woog.nxog.fun",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 520"
+    },
+    {
+      "name": "[csp_Duopan] 🐲装歌｜4K弹幕",
+      "api": "https://ogkk.nxog.fun",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_Tvyb] 💡云播｜影视",
+      "api": "http://www.tvyb03.com",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_AppGet] 👑黑猫｜影视",
+      "api": "http://app1-0-0.87333.cc",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_AppYsV2] 👑奴娜｜影视",
+      "api": "https://www.nntv.in/api.php/v1.vod",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 403"
+    },
+    {
+      "name": "[csp_AppYsV2] 👑超前｜影视",
+      "api": "http://chaoqianys.top:91/api.php/app",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 404"
+    },
+    {
+      "name": "[csp_AppQi] 👑金牌｜影视",
+      "api": "https://qj4.catbb.xyz",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "HTTP 500"
+    },
+    {
+      "name": "[csp_AppGet] 👑猎豹｜影视",
+      "api": "https://444421.xyz",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 👑星空｜影视",
+      "api": "http://xk7.xkgzs.xyz",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_Xlys] 🎃修罗｜磁力",
+      "api": "https://xl01.com.de",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_QnMp4] 🎃七味｜磁力",
+      "api": "https://www.pkmp4.xyz,https://www.qwnull.com,https://www.qwmkv.com,https://www.qwfilm.com,https://www.qnmp4.com,https://www.qnnull.com,https://www.qnhot.com",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "fetch failed"
+    },
+    {
+      "name": "[csp_XYQHiker] 🎃电影｜磁力",
+      "api": "https://cdn.jsdmirror.com/gh/ouhaibo1980/tvbox@main/XYQHiker/电影港.json",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 🤣曼波｜动漫",
+      "api": "https://app.omofun1.top",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_AppGet] 🤣番薯丨动漫",
+      "api": "https://new.app.bytegooty.com",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_XBPQ] 🧿养生｜知识",
+      "api": "https://cdn.jsdmirror.com/gh/ouhaibo1980/tvbox@main/XBPQ/养生堂.json",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid format"
+    },
+    {
+      "name": "[csp_XBPQ] 🧿啊哈｜DJ",
+      "api": "https://cdn.jsdmirror.com/gh/ouhaibo1980/tvbox@main/XBPQ/啊哈DJ.json",
+      "source": "欧歌4K (http://tv.nxog.top/m) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    },
+    {
+      "name": "[csp_Market] 🛒本地包更新",
+      "api": "https://tv.nxog.top/zm/sd?b=tv",
+      "source": "欧歌免费 (https://tv.nxog.top/m/111.php?ou=公众号欧歌app&mz=index&jar=index&123&b=tv) (Spider Ext)",
+      "accessible": false,
+      "requiresAuth": false,
+      "searchApi": null,
+      "error": "Invalid JSON structure"
+    }
+  ]
+}

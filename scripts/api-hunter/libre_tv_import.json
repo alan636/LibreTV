@@ -1,0 +1,117 @@
+[
+  {
+    "name": "非凡┃影视",
+    "url": "http://cj.ffzyapi.com/api.php/provide/vod",
+    "search_api": "http://cj.ffzyapi.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "✅360┃资源",
+    "url": "https://360zy.com/api.php/provide/vod",
+    "search_api": "https://360zy.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "✅红牛┃资源",
+    "url": "https://www.hongniuzy2.com/api.php/provide/vod",
+    "search_api": "https://www.hongniuzy2.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "✅非凡┃影视",
+    "url": "http://cj.ffzyapi.com//api.php/provide/vod",
+    "search_api": "http://cj.ffzyapi.com//api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "✅索尼┃影视",
+    "url": "https://suoniapi.com/api.php/provide/vod/from/snm3u8",
+    "search_api": "https://suoniapi.com/index.php/ajax/suggest?mid=1&wd=from/snm3u8"
+  },
+  {
+    "name": "🔥如意┃采集",
+    "url": "https://cj.rycjapi.com/api.php/provide/vod",
+    "search_api": "https://cj.rycjapi.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://api.guangsuapi.com/api.php/provide/vod",
+    "search_api": ""
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://zy.xiaomaomi.cc/api.php/provide/vod",
+    "search_api": "https://zy.xiaomaomi.cc/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://ckzy.me/api.php/provide/vod",
+    "search_api": "https://ckzy.me/index.php/ajax/suggest?mid=1&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://api.apibdzy.com/api.php/provide/vod",
+    "search_api": "https://api.apibdzy.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://api.wujinapi.com/api.php/provide/vod",
+    "search_api": "https://api.wujinapi.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://api.ukuapi.com/api.php/provide/vod",
+    "search_api": "https://api.ukuapi.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://m3u8.apiyhzy.com/api.php/provide/vod",
+    "search_api": ""
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://yhzy.cc/api.php/provide/vod",
+    "search_api": "https://yhzy.cc/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "4K云盘接口(正则)",
+    "url": "https://collect.wolongzyw.com/api.php/provide/vod",
+    "search_api": "https://collect.wolongzyw.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "🤣魔都┃动漫",
+    "url": "https://caiji.moduapi.cc/api.php/provide/vod/?ac=list",
+    "search_api": "https://caiji.moduapi.cc/api.php/provide/vod/?ac=list?ac=videolist&wd="
+  },
+  {
+    "name": "小盒子4K(正则)",
+    "url": "https://ikunzyapi.com/api.php/provide/vod",
+    "search_api": "https://ikunzyapi.com/api.php/provide/vod?ac=videolist&wd="
+  },
+  {
+    "name": "小盒子4K(正则)",
+    "url": "https://hhzyapi.com/api.php/provide/vod",
+    "search_api": "https://hhzyapi.com/index.php/ajax/suggest?mid=1&wd="
+  },
+  {
+    "name": "小盒子4K(正则)",
+    "url": "https://suoniapi.com/api.php/provide/vod",
+    "search_api": "https://suoniapi.com/index.php/ajax/suggest?mid=1&wd="
+  },
+  {
+    "name": "[csp_WexNewBiLiGuard]  🅱‍哔哩NEW歌曲🅱‍",
+    "url": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkU9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--3083f43a14e6b59f4bfe248478a3a8765b34bfdd/bilisong.txt",
+    "search_api": ""
+  },
+  {
+    "name": "[csp_WexNewBiLiGuard]  🅱‍哔哩NEW合集🅱‍",
+    "url": "https://support-chat.rongcloud.cn/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBBYkE9IiwiZXhwIjpudWxsLCJwdXIiOiJibG9iX2lkIn19--47a8ff0e68559a89a9a75b37d09a2b0854dc5a8a/bili001.txt",
+    "search_api": ""
+  },
+  {
+    "name": "[csp_AppYs] 🔥闪影┃秒播",
+    "url": "http://38.47.213.61:41271/mogai_api.php/v1.vod",
+    "search_api": ""
+  },
+  {
+    "name": "[csp_Jianpian] 🔥荐片┃磁力",
+    "url": "https://api.ztcgi.com",
+    "search_api": ""
+  }
+]
