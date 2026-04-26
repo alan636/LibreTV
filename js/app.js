@@ -666,7 +666,7 @@ async function testApiConnectivity(apiUrl, detailUrl = '') {
     }
 }
 
-function toggleSettings(e) {
+function toggleSettingsPanelFallback(e) {
     const settingsPanel = document.getElementById('settingsPanel');
     if (!settingsPanel) return;
 
@@ -680,6 +680,36 @@ function toggleSettings(e) {
         e.preventDefault();
         e.stopPropagation();
     }
+}
+
+function openResultDetails(card) {
+    if (!card) return;
+
+    const vodId = card.dataset.vodId || '';
+    const vodName = decodeURIComponent(card.dataset.vodName || '');
+    const sourceCode = decodeURIComponent(card.dataset.sourceCode || '');
+
+    if (!vodId) return;
+    showDetails(vodId, vodName, sourceCode);
+}
+
+function handleResultCardKeydown(event, card) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openResultDetails(card);
+    }
+}
+
+function playVideoFromElement(button) {
+    if (!button) return;
+
+    const videoUrl = decodeURIComponent(button.dataset.videoUrl || '');
+    const vodName = decodeURIComponent(button.dataset.vodName || '');
+    const sourceCode = decodeURIComponent(button.dataset.sourceCode || '');
+    const vodId = decodeURIComponent(button.dataset.vodId || '');
+    const episodeIndex = Number.parseInt(button.dataset.episodeIndex || '0', 10);
+
+    playVideo(videoUrl, vodName, sourceCode, episodeIndex, vodId);
 }
 
 // 设置事件监听器
@@ -700,7 +730,11 @@ function setupEventListeners() {
         if (settingsPanel && settingsButton &&
             !settingsPanel.contains(e.target) &&
             !settingsButton.contains(e.target)) {
-            settingsPanel.classList.remove('show');
+            if (typeof closeSettingsPanel === 'function') {
+                closeSettingsPanel();
+            } else {
+                settingsPanel.classList.remove('show');
+            }
         }
 
         // 关闭历史记录面板
@@ -710,7 +744,11 @@ function setupEventListeners() {
         if (historyPanel && historyButton &&
             !historyPanel.contains(e.target) &&
             !historyButton.contains(e.target)) {
-            historyPanel.classList.remove('show');
+            if (typeof closeHistoryPanel === 'function') {
+                closeHistoryPanel();
+            } else {
+                historyPanel.classList.remove('show');
+            }
         }
     });
 
@@ -928,9 +966,11 @@ async function search() {
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+            const encodedName = encodeURIComponent(item.vod_name || '');
             const sourceInfo = item.source_name ?
                 `<span class="bg-[#222] text-xs px-1.5 py-0.5 rounded-full">${item.source_name}</span>` : '';
             const sourceCode = item.source_code || '';
+            const encodedSourceCode = encodeURIComponent(sourceCode);
 
             // 添加API URL属性，用于详情获取
             const apiUrlAttr = item.api_url ?
@@ -940,8 +980,16 @@ async function search() {
             const hasCover = item.vod_pic && item.vod_pic.startsWith('http');
 
             return `
-                <div class="card-hover bg-[#111] rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-[1.02] h-full shadow-sm hover:shadow-md" 
-                     onclick="showDetails('${safeId}','${safeName}','${sourceCode}')" ${apiUrlAttr}>
+                <div class="card-hover bg-[#111] rounded-lg overflow-hidden cursor-pointer transition-all hover:scale-[1.02] h-full shadow-sm hover:shadow-md"
+                     role="button"
+                     tabindex="0"
+                     data-vod-id="${safeId}"
+                     data-vod-name="${encodedName}"
+                     data-source-code="${encodedSourceCode}"
+                     onclick="openResultDetails(this)"
+                     onkeydown="handleResultCardKeydown(event, this)"
+                     aria-label="查看 ${safeName} 的剧集"
+                     ${apiUrlAttr}>
                     <div class="flex h-full">
                         ${hasCover ? `
                         <div class="relative flex-shrink-0 search-card-img-container">
@@ -1171,6 +1219,7 @@ async function showDetails(id, vod_name, sourceCode) {
         }
 
         modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
     } catch (error) {
         console.error('获取详情错误:', error);
         showToast('获取详情失败，请稍后重试', 'error');
@@ -1179,7 +1228,7 @@ async function showDetails(id, vod_name, sourceCode) {
     }
 }
 
-// 更新播放视频函数，修改为使用/watch路径而不是直接打开player.html
+// 更新播放视频函数，直接跳转到播放器页面
 function playVideo(url, vod_name, sourceCode, episodeIndex = 0, vodId = '') {
     // 密码保护校验
     if (window.isPasswordProtected && window.isPasswordVerified) {
@@ -1192,16 +1241,11 @@ function playVideo(url, vod_name, sourceCode, episodeIndex = 0, vodId = '') {
     // 获取当前路径作为返回页面
     let currentPath = window.location.href;
 
-    // 构建播放页面URL，使用watch.html作为中间跳转页
-    let watchUrl = `watch.html?id=${vodId || ''}&source=${sourceCode || ''}&url=${encodeURIComponent(url)}&index=${episodeIndex}&title=${encodeURIComponent(vod_name || '')}&_v=${encodeURIComponent(appAssetVersion)}`;
+    // 构建播放页面URL，直接进入播放器页
+    let playerUrl = `player.html?id=${encodeURIComponent(vodId || '')}&source=${encodeURIComponent(sourceCode || '')}&source_code=${encodeURIComponent(sourceCode || '')}&url=${encodeURIComponent(url)}&index=${episodeIndex}&title=${encodeURIComponent(vod_name || '')}&returnUrl=${encodeURIComponent(currentPath)}&_v=${encodeURIComponent(appAssetVersion)}`;
 
     if (isVideoProxyEnabled()) {
-        watchUrl += '&videoProxy=1';
-    }
-
-    // 添加返回URL参数
-    if (currentPath.includes('index.html') || currentPath.endsWith('/')) {
-        watchUrl += `&back=${encodeURIComponent(currentPath)}`;
+        playerUrl += '&videoProxy=1';
     }
 
     // 保存当前状态到localStorage
@@ -1218,7 +1262,7 @@ function playVideo(url, vod_name, sourceCode, episodeIndex = 0, vodId = '') {
     }
 
     // 在当前标签页中打开播放页面
-    window.location.href = watchUrl;
+    window.location.assign(playerUrl);
 }
 
 // 弹出播放器页面
@@ -1227,6 +1271,7 @@ function showVideoPlayer(url) {
     const detailModal = document.getElementById('modal');
     if (detailModal) {
         detailModal.classList.add('hidden');
+        detailModal.setAttribute('aria-hidden', 'true');
     }
     // 临时隐藏搜索结果和豆瓣区域，防止高度超出播放器而出现滚动条
     document.getElementById('resultsArea').classList.add('hidden');
@@ -1252,6 +1297,7 @@ function closeVideoPlayer(home = false) {
         const detailModal = document.getElementById('modal');
         if (detailModal) {
             detailModal.classList.add('hidden');
+            detailModal.setAttribute('aria-hidden', 'true');
         }
         // 如果启用豆瓣区域则显示豆瓣区域
         if (localStorage.getItem('doubanEnabled') === 'true') {
@@ -1294,8 +1340,19 @@ function renderEpisodes(vodName, sourceCode, vodId) {
     return episodes.map((episode, index) => {
         // 根据倒序状态计算真实的剧集索引
         const realIndex = episodesReversed ? currentEpisodes.length - 1 - index : index;
+        const encodedEpisode = encodeURIComponent(episode || '');
+        const encodedVodName = encodeURIComponent(vodName || '');
+        const encodedSourceCode = encodeURIComponent(sourceCode || '');
+        const encodedVodId = encodeURIComponent(vodId || '');
         return `
-            <button id="episode-${realIndex}" onclick="playVideo('${episode}','${vodName.replace(/"/g, '&quot;')}', '${sourceCode}', ${realIndex}, '${vodId}')" 
+            <button id="episode-${realIndex}"
+                    type="button"
+                    data-video-url="${encodedEpisode}"
+                    data-vod-name="${encodedVodName}"
+                    data-source-code="${encodedSourceCode}"
+                    data-vod-id="${encodedVodId}"
+                    data-episode-index="${realIndex}"
+                    onclick="playVideoFromElement(this)" 
                     class="px-4 py-2 bg-[#222] hover:bg-[#333] border border-[#333] rounded-lg transition-colors text-center episode-btn">
                 ${realIndex + 1}
             </button>

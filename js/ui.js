@@ -1,4 +1,31 @@
 // UI相关函数
+function setPanelState(panelId, shouldOpen, triggerId) {
+    const panel = document.getElementById(panelId);
+    if (!panel) return false;
+
+    panel.classList.toggle('show', shouldOpen);
+    panel.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+
+    const trigger = triggerId ? document.getElementById(triggerId) : null;
+    if (trigger) {
+        trigger.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+    }
+
+    if (shouldOpen && typeof panel.focus === 'function') {
+        panel.focus();
+    }
+
+    return shouldOpen;
+}
+
+function closeSettingsPanel() {
+    setPanelState('settingsPanel', false, 'settingsButton');
+}
+
+function closeHistoryPanel() {
+    setPanelState('historyPanel', false, 'historyButton');
+}
+
 function toggleSettings(e) {
     // 强化的密码保护校验 - 防止绕过
     try {
@@ -18,9 +45,16 @@ function toggleSettings(e) {
         return;
     }
     // 阻止事件冒泡，防止触发document的点击事件
+    e && e.preventDefault();
     e && e.stopPropagation();
     const panel = document.getElementById('settingsPanel');
-    panel.classList.toggle('show');
+    if (!panel) return;
+
+    const shouldOpen = !panel.classList.contains('show');
+    setPanelState('settingsPanel', shouldOpen, 'settingsButton');
+    if (shouldOpen) {
+        closeHistoryPanel();
+    }
 }
 
 // 改进的Toast显示函数 - 支持队列显示多个Toast
@@ -135,7 +169,11 @@ function updateSiteStatus(isAvailable) {
 }
 
 function closeModal() {
-    document.getElementById('modal').classList.add('hidden');
+    const modal = document.getElementById('modal');
+    if (!modal) return;
+
+    modal.classList.add('hidden');
+    modal.setAttribute('aria-hidden', 'true');
     // 清除 iframe 内容
     document.getElementById('modalContent').innerHTML = '';
 }
@@ -314,21 +352,25 @@ function toggleHistory(e) {
             return;
         }
     }
-    if (e) e.stopPropagation();
+    if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
 
     const panel = document.getElementById('historyPanel');
     if (panel) {
-        panel.classList.toggle('show');
+        const shouldOpen = !panel.classList.contains('show');
+        setPanelState('historyPanel', shouldOpen, 'historyButton');
 
         // 如果打开了历史记录面板，则加载历史数据
-        if (panel.classList.contains('show')) {
+        if (shouldOpen) {
             loadViewingHistory();
         }
 
         // 如果设置面板是打开的，则关闭它
         const settingsPanel = document.getElementById('settingsPanel');
         if (settingsPanel && settingsPanel.classList.contains('show')) {
-            settingsPanel.classList.remove('show');
+            closeSettingsPanel();
         }
     }
 }
@@ -432,15 +474,29 @@ function loadViewingHistory() {
             `;
         }
 
-        // 为防止XSS，使用encodeURIComponent编码URL
+        // 为防止XSS，使用encodeURIComponent编码运行参数
         const safeURL = encodeURIComponent(item.url);
+        const safeEncodedTitle = encodeURIComponent(item.title || '');
+        const safeEpisodeIndex = Number.isInteger(item.episodeIndex) ? item.episodeIndex : 0;
+        const safePlaybackPosition = Math.floor(item.playbackPosition || 0);
 
         // 构建历史记录项HTML，添加删除按钮，需要放在position:relative的容器中
         return `
-            <div class="history-item cursor-pointer relative group" onclick="playFromHistory('${item.url}', '${safeTitle}', ${item.episodeIndex || 0}, ${item.playbackPosition || 0})">
-                <button onclick="event.stopPropagation(); deleteHistoryItem('${safeURL}')"
-                        class="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-gray-400 hover:text-red-400 p-1 rounded-full hover:bg-gray-800 z-10"
-                        title="删除记录">
+            <div class="history-item cursor-pointer relative group"
+                 role="button"
+                 tabindex="0"
+                 data-url="${safeURL}"
+                 data-title="${safeEncodedTitle}"
+                 data-episode-index="${safeEpisodeIndex}"
+                 data-playback-position="${safePlaybackPosition}"
+                 onclick="playFromHistoryElement(this)"
+                 onkeydown="handleHistoryItemKeydown(event, this)"
+                 aria-label="继续播放 ${safeTitle}">
+                <button type="button"
+                        onclick="event.stopPropagation(); deleteHistoryItem('${safeURL}')"
+                        class="delete-btn absolute right-2 top-2 text-gray-400 hover:text-red-400 p-1 rounded-full hover:bg-gray-800 z-10"
+                        title="删除记录"
+                        aria-label="删除 ${safeTitle} 的记录">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
@@ -462,9 +518,7 @@ function loadViewingHistory() {
     }).join('');
 
     // 检查是否存在较多历史记录，添加底部边距确保底部按钮不会挡住内容
-    if (history.length > 5) {
-        historyList.classList.add('pb-4');
-    }
+    historyList.classList.toggle('pb-4', history.length > 5);
 }
 
 // 格式化播放时间为 mm:ss 格式
@@ -689,6 +743,25 @@ async function playFromHistory(url, title, episodeIndex, playbackPosition = 0) {
     }
 }
 
+function playFromHistoryElement(element) {
+    if (!element) return;
+
+    const url = decodeURIComponent(element.dataset.url || '');
+    const title = decodeURIComponent(element.dataset.title || '');
+    const episodeIndex = Number.parseInt(element.dataset.episodeIndex || '0', 10);
+    const playbackPosition = Number.parseInt(element.dataset.playbackPosition || '0', 10);
+
+    if (!url) return;
+    playFromHistory(url, title, episodeIndex, playbackPosition);
+}
+
+function handleHistoryItemKeydown(event, element) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        playFromHistoryElement(element);
+    }
+}
+
 // 添加观看历史 - 确保每个视频标题只有一条记录
 // IMPORTANT: videoInfo passed to this function should include a 'showIdentifier' property
 // (ideally `${sourceName}_${vod_id}`), 'sourceName', and 'vod_id'.
@@ -799,22 +872,26 @@ toggleSettings = function(e) {
     // 如果历史记录面板是打开的，则关闭它
     const historyPanel = document.getElementById('historyPanel');
     if (historyPanel && historyPanel.classList.contains('show')) {
-        historyPanel.classList.remove('show');
+        closeHistoryPanel();
     }
 };
 
 // 点击外部关闭历史面板
 document.addEventListener('DOMContentLoaded', function() {
-    document.addEventListener('click', function(e) {
-        const historyPanel = document.getElementById('historyPanel');
-        const historyButton = document.querySelector('button[onclick="toggleHistory(event)"]');
+    setPanelState('historyPanel', false, 'historyButton');
+    setPanelState('settingsPanel', false, 'settingsButton');
 
-        if (historyPanel && historyButton &&
-            !historyPanel.contains(e.target) &&
-            !historyButton.contains(e.target) &&
-            historyPanel.classList.contains('show')) {
-            historyPanel.classList.remove('show');
+    document.addEventListener('keydown', function(e) {
+        if (e.key !== 'Escape') return;
+
+        const modal = document.getElementById('modal');
+        if (modal && !modal.classList.contains('hidden')) {
+            closeModal();
+            return;
         }
+
+        closeSettingsPanel();
+        closeHistoryPanel();
     });
 });
 

@@ -1,5 +1,50 @@
 /* 主页特定样式 */
 
+.home-page {
+    position: relative;
+    isolation: isolate;
+    background: transparent;
+    min-height: 100vh;
+    overflow-x: clip;
+}
+
+.home-page.page-bg {
+    background: transparent !important;
+    background-image: none !important;
+}
+
+.home-page .container,
+.home-page .footer {
+    position: relative;
+    z-index: 2;
+}
+
+.page-backdrop,
+.page-backdrop-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+.page-backdrop {
+    z-index: 0;
+    background:
+        linear-gradient(180deg, rgba(15, 22, 34, 0.18), rgba(15, 22, 34, 0.46)),
+        var(--home-backdrop-image, linear-gradient(180deg, #0f1622, #192231));
+    background-size: cover;
+    background-position: center;
+    filter: blur(26px) saturate(1.1);
+    transform: scale(1.08);
+}
+
+.page-backdrop-overlay {
+    z-index: 1;
+    background:
+        linear-gradient(180deg, rgba(8, 12, 18, 0.55), rgba(8, 12, 18, 0.8)),
+        radial-gradient(circle at top right, rgba(255, 60, 120, 0.12), transparent 40%),
+        radial-gradient(circle at top left, rgba(0, 204, 255, 0.12), transparent 38%);
+}
+
 /* 历史记录和设置按钮定位样式 */
 .top-corner-button {
     position: fixed;
@@ -209,8 +254,18 @@
 }
 
 /* 瀑布流容器 - 两侧 8% margin */
+#doubanArea {
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+}
+
 .douban-waterfall-container {
-    margin: 0 8%;
+    width: min(92vw, 1600px);
+    margin: 0 auto;
+    padding: 0 0.5rem 0.75rem;
+    box-sizing: border-box;
 }
 
 /* 瀑布流网格 - 列数由容器宽度自动决定 */
@@ -256,6 +311,11 @@
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
+.movie-card:focus-visible {
+    outline: 2px solid rgba(0, 204, 255, 0.75);
+    outline-offset: 4px;
+}
+
 @media (hover: hover) {
     .movie-card:hover {
         transform: scale(1.08);
@@ -274,6 +334,7 @@
 .movie-card.is-expanded {
     transform: scale(1.08) !important;
     z-index: 100 !important;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.8);
 }
 .movie-card.is-expanded .poster-img {
     filter: brightness(0.2) blur(10px) !important;
@@ -403,4 +464,39 @@
     font-weight: 900;
     color: rgba(255, 255, 255, 0.3);
     margin-bottom: 2px;
+}
+
+@media (max-width: 768px) {
+    #doubanArea {
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .douban-waterfall-container {
+        width: 100%;
+        padding: 0 0.5rem 0.75rem;
+    }
+
+    .douban-waterfall-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 12px !important;
+    }
+
+    .movie-card,
+    .movie-card.is-expanded {
+        transform: none !important;
+    }
+}
+
+@media (min-width: 1024px) {
+    .douban-waterfall-container {
+        width: 80vw;
+        max-width: 80vw;
+        padding: 0 24px 24px;
+    }
+
+    .douban-waterfall-grid {
+        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    }
 }

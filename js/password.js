@@ -91,6 +91,20 @@ window.isPasswordVerified = isPasswordVerified;
 window.verifyPassword = verifyPassword;
 window.ensurePasswordProtection = ensurePasswordProtection;
 
+let lastPasswordFocusedElement = null;
+
+function getOptionalElement(id) {
+    return document.getElementById(id);
+}
+
+function setPasswordModalState(isVisible) {
+    const passwordModal = getOptionalElement('passwordModal');
+    if (!passwordModal) return;
+
+    passwordModal.style.display = isVisible ? 'flex' : 'none';
+    passwordModal.setAttribute('aria-hidden', isVisible ? 'false' : 'true');
+}
+
 // SHA-256实现，可用Web Crypto API
 async function sha256(message) {
     if (window.crypto && crypto.subtle && crypto.subtle.digest) {
@@ -112,9 +126,18 @@ async function sha256(message) {
 function showPasswordModal() {
     const passwordModal = document.getElementById('passwordModal');
     if (passwordModal) {
+        lastPasswordFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+
         // 防止出现豆瓣区域滚动条
-        document.getElementById('doubanArea').classList.add('hidden');
-        document.getElementById('passwordCancelBtn').classList.add('hidden');
+        const doubanArea = getOptionalElement('doubanArea');
+        if (doubanArea) {
+            doubanArea.classList.add('hidden');
+        }
+
+        const cancelButton = getOptionalElement('passwordCancelBtn');
+        if (cancelButton) {
+            cancelButton.classList.add('hidden');
+        }
 
         // 检查是否需要强制设置密码
         if (isPasswordRequired()) {
@@ -144,7 +167,7 @@ function showPasswordModal() {
             if (form) form.style.display = 'block';
         }
 
-        passwordModal.style.display = 'flex';
+        setPasswordModalState(true);
 
         // 只有在非强制设置密码模式下才聚焦输入框
         if (!isPasswordRequired()) {
@@ -172,13 +195,21 @@ function hidePasswordModal() {
         const passwordInput = document.getElementById('passwordInput');
         if (passwordInput) passwordInput.value = '';
 
-        passwordModal.style.display = 'none';
+        setPasswordModalState(false);
 
         // 如果启用豆瓣区域则显示豆瓣区域
-        if (localStorage.getItem('doubanEnabled') === 'true') {
-            document.getElementById('doubanArea').classList.remove('hidden');
-            initDouban();
+        const doubanArea = getOptionalElement('doubanArea');
+        if (doubanArea && localStorage.getItem('doubanEnabled') === 'true') {
+            doubanArea.classList.remove('hidden');
+            if (typeof initDouban === 'function') {
+                initDouban();
+            }
         }
+
+        if (lastPasswordFocusedElement && typeof lastPasswordFocusedElement.focus === 'function') {
+            lastPasswordFocusedElement.focus();
+        }
+        lastPasswordFocusedElement = null;
     }
 }
 
@@ -242,4 +273,15 @@ function initPasswordProtection() {
 // 在页面加载完成后初始化密码保护
 document.addEventListener('DOMContentLoaded', function () {
     initPasswordProtection();
+});
+
+document.addEventListener('keydown', function (event) {
+    const passwordModal = getOptionalElement('passwordModal');
+    if (!passwordModal || passwordModal.style.display !== 'flex') {
+        return;
+    }
+
+    if (event.key === 'Escape' && !isPasswordRequired()) {
+        hidePasswordModal();
+    }
 });

@@ -93,7 +93,71 @@ let adFilteringEnabled = true; // 默认开启广告过滤
 let progressSaveInterval = null; // 定期保存进度的计时器
 let currentVideoUrl = ''; // 记录当前实际的视频URL
 const isWebkit = (typeof window.webkitConvertPointFromNodeToPage === 'function')
+const PLAYER_TIPS_STORAGE_KEY = 'playerQuickTipsDismissed';
 Artplayer.FULLSCREEN_WEB_IN_BODY = true;
+
+function isTouchPrimaryInput() {
+    return window.matchMedia('(hover: none), (pointer: coarse)').matches;
+}
+
+function getPlayerQuickTipsContent() {
+    if (isTouchPrimaryInput()) {
+        return {
+            summary: '触屏下优先用长按、拖动和锁定，能减少误触。',
+            items: [
+                '长按画面可临时切到 3 倍速，松手后恢复。',
+                '直接拖动进度条即可精准定位，不需要反复快进。',
+                '误触较多时先点右侧锁定按钮，再专心看片。'
+            ]
+        };
+    }
+
+    return {
+        summary: '桌面端支持快捷键，看片和切集会顺手很多。',
+        items: [
+            '空格键播放或暂停，左右方向键快退或快进 5 秒。',
+            'Alt + 左右方向键可切换上一集或下一集。',
+            'F 键切换全屏，复制链接可快速分享当前播放地址。'
+        ]
+    };
+}
+
+function dismissPlayerQuickTips() {
+    const quickTips = document.getElementById('playerQuickTips');
+    if (quickTips) {
+        quickTips.classList.add('hidden');
+    }
+
+    try {
+        localStorage.setItem(PLAYER_TIPS_STORAGE_KEY, 'true');
+    } catch (error) {
+        console.warn('保存播放器提示状态失败:', error);
+    }
+}
+
+function setupPlayerQuickTips() {
+    const quickTips = document.getElementById('playerQuickTips');
+    const summary = document.getElementById('playerTipsSummary');
+    const list = document.getElementById('playerTipsList');
+    const dismissButton = document.getElementById('dismissPlayerTips');
+    if (!quickTips || !summary || !list) return;
+
+    if (dismissButton && !dismissButton.dataset.bound) {
+        dismissButton.addEventListener('click', dismissPlayerQuickTips);
+        dismissButton.dataset.bound = 'true';
+    }
+
+    const hasDismissed = localStorage.getItem(PLAYER_TIPS_STORAGE_KEY) === 'true';
+    if (hasDismissed) {
+        quickTips.classList.add('hidden');
+        return;
+    }
+
+    const tipContent = getPlayerQuickTipsContent();
+    summary.textContent = tipContent.summary;
+    list.innerHTML = tipContent.items.map(item => `<li>${item}</li>`).join('');
+    quickTips.classList.remove('hidden');
+}
 
 function getCurrentSourceCode() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -302,6 +366,9 @@ function initializePageContent() {
 
     // 更新排序按钮状态
     updateOrderButton();
+
+    // 显示播放器交互提示
+    setupPlayerQuickTips();
 
     // 添加对进度条的监听，确保点击准确跳转
     setTimeout(() => {
@@ -1668,6 +1735,7 @@ async function showSwitchResourceModal() {
     modalTitle.innerHTML = `<span class="break-words">${currentVideoTitle}</span>`;
     modalContent.innerHTML = '<div style="text-align:center;padding:20px;color:#aaa;grid-column:1/-1;">正在加载资源列表...</div>';
     modal.classList.remove('hidden');
+    modal.setAttribute('aria-hidden', 'false');
 
     // 搜索
     const resourceOptions = selectedAPIs.map((curr) => {
@@ -1777,7 +1845,11 @@ async function showSwitchResourceModal() {
 // 切换资源的函数
 async function switchToResource(sourceKey, vodId) {
     // 关闭模态框
-    document.getElementById('modal').classList.add('hidden');
+    const modal = document.getElementById('modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        modal.setAttribute('aria-hidden', 'true');
+    }
     
     showLoading();
     try {

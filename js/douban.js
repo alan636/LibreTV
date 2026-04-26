@@ -59,6 +59,96 @@ let doubanObserver = null; // 无限滚动观察器
 let doubanHasMore = true; // 是否还有更多内容
 let doubanRequestGeneration = 0; // 请求代次，用于丢弃过时的响应
 
+function collapseExpandedDoubanCards(exceptCard = null) {
+    document.querySelectorAll('#douban-results .movie-card.is-expanded').forEach(card => {
+        if (card !== exceptCard) {
+            card.classList.remove('is-expanded');
+            card.setAttribute('aria-expanded', 'false');
+        }
+    });
+}
+
+function expandDoubanCard(card) {
+    if (!card) return;
+    collapseExpandedDoubanCards(card);
+    card.classList.add('is-expanded');
+    card.setAttribute('aria-expanded', 'true');
+}
+
+function supportsDoubanHoverPreview() {
+    try {
+        return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    } catch (error) {
+        return false;
+    }
+}
+
+function shouldUseTwoStepDoubanPlayback(event, card) {
+    const pointerType = event?.pointerType || card?.dataset.lastPointerType || '';
+
+    if (pointerType === 'touch' || pointerType === 'pen') {
+        return true;
+    }
+
+    if (pointerType === 'mouse') {
+        return false;
+    }
+
+    return !supportsDoubanHoverPreview();
+}
+
+function getDoubanCardAriaLabel(title) {
+    if (supportsDoubanHoverPreview()) {
+        return `查看 ${title} 的信息，单击开始搜索播放`;
+    }
+
+    return `查看 ${title} 的信息，第二次点击开始搜索播放`;
+}
+
+function rememberDoubanPointerType(event, card) {
+    if (!card || !event?.pointerType) return;
+    card.dataset.lastPointerType = event.pointerType;
+}
+
+function handleDoubanCardPlayback(card, title, useTwoStepPreview = false) {
+    if (!card || !title) return;
+
+    if (!useTwoStepPreview) {
+        fillAndSearchWithDouban(title);
+        return;
+    }
+
+    if (card.classList.contains('is-expanded')) {
+        fillAndSearchWithDouban(title);
+        return;
+    }
+
+    expandDoubanCard(card);
+}
+
+function handleDoubanCardClick(event, card, title) {
+    if (!card || event.target.closest('.douban-btn-style')) {
+        return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    handleDoubanCardPlayback(card, title, shouldUseTwoStepDoubanPlayback(event, card));
+}
+
+function handleDoubanCardKeydown(event, card, title) {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        handleDoubanCardPlayback(card, title, shouldUseTwoStepDoubanPlayback(event, card));
+        return;
+    }
+
+    if (event.key === 'Escape') {
+        card.classList.remove('is-expanded');
+        card.setAttribute('aria-expanded', 'false');
+    }
+}
+
 // 初始化豆瓣功能
 function initDouban() {
     // 设置豆瓣开关的初始状态
@@ -648,13 +738,17 @@ function renderDoubanCards(data, container, appendMode = false) {
             loadedDoubanIds.add(item.id);
             newItemCount++;
 
-            const card = document.createElement("div");
-            card.className = "movie-card group";
-
             const safeTitle = item.title
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;');
+
+            const card = document.createElement("div");
+            card.className = "movie-card group";
+            card.tabIndex = 0;
+            card.setAttribute('role', 'button');
+            card.setAttribute('aria-expanded', 'false');
+            card.setAttribute('aria-label', getDoubanCardAriaLabel(item.title));
 
             const safeRate = (item.rate || "暂无")
                 .replace(/</g, '&lt;')
@@ -663,14 +757,14 @@ function renderDoubanCards(data, container, appendMode = false) {
             const originalCoverUrl = item.cover;
 
             card.innerHTML = `
-                <div class="poster-container" onclick="fillAndSearchWithDouban('${safeTitle}')">
+                <div class="poster-container">
                     <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 300'><rect fill='%231a1a1a' x='0' y='0' width='300' height='400'/><text fill='%23555' font-family='sans-serif' font-size='14' x='50%' y='50%' text-anchor='middle'>加载中...</text></svg>" alt="${safeTitle}" 
                         class="poster-img"
                         loading="lazy">
                 </div>
                 
                 <!-- 悬浮层 (V7 Pro) -->
-                <div class="center-desc cursor-pointer" onclick="fillAndSearchWithDouban('${safeTitle}')">
+                <div class="center-desc cursor-pointer">
                     <!-- 类别 - 固定在 1/5 处 -->
                     <div class="meta-tags-real category-bubble">加载中...</div>
                     
@@ -696,6 +790,10 @@ function renderDoubanCards(data, container, appendMode = false) {
                     </div>
                 </div>
             `;
+
+            card.addEventListener('pointerdown', event => rememberDoubanPointerType(event, card));
+            card.addEventListener('click', event => handleDoubanCardClick(event, card, item.title));
+            card.addEventListener('keydown', event => handleDoubanCardKeydown(event, card, item.title));
 
             // 存入ID用于后续懒加载详情
             card.setAttribute('data-douban-id', item.id);
@@ -730,6 +828,12 @@ function renderDoubanCards(data, container, appendMode = false) {
     }
     container.appendChild(fragment);
 }
+
+document.addEventListener('click', function(event) {
+    if (!event.target.closest('#douban-results .movie-card')) {
+        collapseExpandedDoubanCards();
+    }
+});
 
 // 懒加载豆瓣详情：类型、年份、热评
 async function loadDoubanDetail(cardElement, subjectId) {

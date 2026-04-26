@@ -1,11 +1,15 @@
+:root {
+    --player-header-height: 72px;
+}
+
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     background-color: #0f1622;
     color: white;
-    padding-top: 37px;
+    padding-top: 0;
 }
 
 /* Critical header and navigation styles */
@@ -16,13 +20,16 @@ body, html {
 }
 
 .player-header-fixed {
-    position: fixed !important;
+    position: sticky !important;
     top: 0;
     left: 0;
-    width: 100vw;
+    width: 100%;
+    min-height: var(--player-header-height);
     z-index: 9000 !important;
     pointer-events: auto !important;
-    background: #111;
+    box-sizing: border-box;
+    background: rgba(17, 17, 17, 0.96);
+    backdrop-filter: blur(12px);
 }
 
 #homeButton { 
@@ -145,7 +152,10 @@ div.player-loading-text {
 
 #player {
     width: 100%;
-    height: 60vh; /* 视频播放器高度 */
+    height: auto;
+    min-height: 220px;
+    max-height: min(70svh, 720px);
+    aspect-ratio: 16 / 9;
 }
 
 .loading-container {
@@ -207,8 +217,9 @@ div.player-loading-text {
 }
 
 .episode-grid {
-    max-height: 30vh;
+    max-height: min(45vh, 26rem);
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 /* 恢复播放位置提示样式 */
@@ -304,6 +315,72 @@ input:checked + .slider:before {
     opacity: 1;
 }
 
+.player-quick-tips {
+    margin-bottom: 1rem;
+}
+
+.player-quick-tips-card {
+    background: linear-gradient(135deg, rgba(0, 204, 255, 0.08), rgba(255, 60, 120, 0.08));
+    border: 1px solid rgba(0, 204, 255, 0.22);
+    border-radius: 12px;
+    padding: 1rem 1.1rem;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+}
+
+.player-quick-tips-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.player-quick-tips-eyebrow {
+    margin: 0 0 0.25rem;
+    color: #67e8f9;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.player-quick-tips-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.player-quick-tips-summary {
+    margin: 0.75rem 0 0;
+    color: #cbd5e1;
+    font-size: 0.92rem;
+}
+
+.player-quick-tips-list {
+    margin: 0.9rem 0 0;
+    padding-left: 1.1rem;
+    color: #e2e8f0;
+    display: grid;
+    gap: 0.55rem;
+    font-size: 0.9rem;
+}
+
+.player-quick-tips-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.55);
+    color: #cbd5e1;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.player-quick-tips-close:hover {
+    background: rgba(51, 65, 85, 0.9);
+    color: #fff;
+}
+
 /* 原生全屏时，播放器容器铺满 */
 .player-container:-webkit-full-screen,
 .player-container:fullscreen {
@@ -374,8 +451,18 @@ input:checked + .slider:before {
 
 /* 新增：移动端响应式样式 */
 @media (max-width: 640px) {
+    :root {
+        --player-header-height: 60px;
+    }
+
+    #player {
+        min-height: 200px;
+        max-height: none;
+    }
+
     .episode-grid {
-        max-height: 40vh; /* 移动端增加集数列表高度 */
+        max-height: none; /* 移动端改为自然滚动，避免嵌套滚动 */
+        overflow: visible;
     }
 
     /* 改进移动端按钮显示 */
@@ -386,6 +473,10 @@ input:checked + .slider:before {
     /* 控制栏在小屏幕上可能需要换行 */
     .player-container .flex-wrap {
         margin-bottom: 4px;
+    }
+
+    .player-quick-tips-card {
+        padding: 0.9rem;
     }
 }
 

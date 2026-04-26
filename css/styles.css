@@ -139,6 +139,9 @@ button, .card-hover {
     transition: transform 0.3s ease;
     background: linear-gradient(135deg, var(--page-gradient-end), var(--page-gradient-start));
     border-left: 1px solid var(--primary-color);
+    width: min(100vw, 20rem);
+    max-width: 100vw;
+    overflow-x: hidden;
 }
 
 .settings-panel.show {
@@ -660,7 +663,7 @@ body {
     transition: transform 0.3s ease-in-out;
     overflow-y: scroll; /* 始终显示滚动条，防止宽度变化 */
     overflow-x: hidden; /* 防止水平滚动 */
-    width: 320px; /* 固定宽度 */
+    width: min(100vw, 320px);
     box-sizing: border-box; /* 确保padding不影响总宽度 */
     scrollbar-gutter: stable; /* 现代浏览器：为滚动条预留空间 */
 }
@@ -686,19 +689,25 @@ body {
     width: 100%; /* 确保宽度一致 */
 }
 
+.history-item:focus-visible {
+    outline: 2px solid rgba(0, 204, 255, 0.6);
+    outline-offset: 2px;
+}
+
 .history-item:hover {
     transform: translateY(-2px);
     border-color: #444;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* 添加组悬停效果，使删除按钮在悬停时显示 */
+/* 删除按钮默认隐藏，在悬停、聚焦和触屏环境显示 */
 .history-item .delete-btn {
     opacity: 0;
     transition: opacity 0.2s ease;
 }
 
-.history-item:hover .delete-btn {
+.history-item:hover .delete-btn,
+.history-item:focus-within .delete-btn {
     opacity: 1;
 }
 
@@ -757,6 +766,24 @@ body {
 
 .history-info {
     padding: 10px;
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 768px) {
+    .history-item {
+        padding-right: 2.75rem;
+    }
+
+    .history-item .delete-btn {
+        opacity: 1;
+        background-color: rgba(17, 24, 39, 0.9);
+    }
+}
+
+@media screen and (max-width: 640px) {
+    .settings-panel,
+    .history-panel {
+        width: 100vw !important;
+    }
 }
 
 .history-time {

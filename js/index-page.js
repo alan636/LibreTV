@@ -1,5 +1,117 @@
+const BING_WALLPAPER_CACHE_KEY = 'bingWallpaperSelection';
+const BING_WALLPAPER_API = 'https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=8&mkt=zh-CN';
+
+function getLocalDateKey() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+async function buildProxyRequestUrl(targetUrl) {
+    const proxyUrl = `/proxy/${encodeURIComponent(targetUrl)}`;
+    if (window.ProxyAuth && typeof window.ProxyAuth.addAuthToProxyUrl === 'function') {
+        return window.ProxyAuth.addAuthToProxyUrl(proxyUrl);
+    }
+    return proxyUrl;
+}
+
+function applyHomeBackdrop(imageUrl) {
+    if (!imageUrl) return;
+
+    const safeUrl = imageUrl.replace(/"/g, '%22');
+    document.documentElement.style.setProperty('--home-backdrop-image', `url("${safeUrl}")`);
+    console.info('[Homepage] Bing 壁纸已应用:', imageUrl);
+}
+
+function getCachedWallpaperSelection() {
+    try {
+        const cached = JSON.parse(localStorage.getItem(BING_WALLPAPER_CACHE_KEY) || 'null');
+        if (cached && cached.date === getLocalDateKey() && cached.imageUrl) {
+            return cached.imageUrl;
+        }
+    } catch (error) {
+        console.warn('读取 Bing 壁纸缓存失败:', error);
+    }
+    return '';
+}
+
+function cacheWallpaperSelection(imageUrl) {
+    try {
+        localStorage.setItem(BING_WALLPAPER_CACHE_KEY, JSON.stringify({
+            date: getLocalDateKey(),
+            imageUrl
+        }));
+    } catch (error) {
+        console.warn('缓存 Bing 壁纸失败:', error);
+    }
+}
+
+function normalizeBingImageUrl(image) {
+    if (!image) return '';
+    if (image.url) {
+        return new URL(image.url, 'https://www.bing.com').toString();
+    }
+    if (image.urlbase) {
+        return `https://www.bing.com${image.urlbase}_1920x1080.jpg`;
+    }
+    return '';
+}
+
+function preloadImage(imageUrl) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(imageUrl);
+        img.onerror = reject;
+        img.src = imageUrl;
+    });
+}
+
+async function initBingWallpaperBackground() {
+    const cachedImageUrl = getCachedWallpaperSelection();
+    if (cachedImageUrl) {
+        console.info('[Homepage] 使用缓存 Bing 壁纸:', cachedImageUrl);
+        const cachedProxyUrl = await buildProxyRequestUrl(cachedImageUrl);
+        applyHomeBackdrop(cachedProxyUrl);
+        return;
+    }
+
+    try {
+        console.info('[Homepage] 正在加载 Bing 壁纸');
+        const requestUrl = await buildProxyRequestUrl(BING_WALLPAPER_API);
+        const response = await fetch(requestUrl, {
+            cache: 'no-store'
+        });
+        if (!response.ok) {
+            throw new Error(`Bing wallpaper request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const images = Array.isArray(data.images) ? data.images : [];
+        if (images.length === 0) {
+            throw new Error('No Bing wallpapers returned');
+        }
+
+        const randomImage = images[Math.floor(Math.random() * images.length)];
+        const imageUrl = normalizeBingImageUrl(randomImage);
+        if (!imageUrl) {
+            throw new Error('Invalid Bing wallpaper URL');
+        }
+
+        const proxiedImageUrl = await buildProxyRequestUrl(imageUrl);
+        await preloadImage(proxiedImageUrl);
+        cacheWallpaperSelection(imageUrl);
+        applyHomeBackdrop(proxiedImageUrl);
+    } catch (error) {
+        console.error('[Homepage] 初始化 Bing 背景失败，回退到默认背景:', error);
+    }
+}
+
 // 页面加载后显示弹窗脚本
 document.addEventListener('DOMContentLoaded', function() {
+    void initBingWallpaperBackground();
+
     // 弹窗显示脚本
     // 检查用户是否已经看过声明
     const hasSeenDisclaimer = localStorage.getItem('hasSeenDisclaimer');
